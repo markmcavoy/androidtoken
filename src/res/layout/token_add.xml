@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" 
+	android:fillViewport="true"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	>
+
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="fill_parent"
+  android:layout_height="wrap_content"
+  android:orientation="vertical"
+  android:padding="5sp">
+  
+	<LinearLayout
+	  xmlns:android="http://schemas.android.com/apk/res/android"
+	  android:layout_width="fill_parent"
+	  android:layout_height="wrap_content"
+	  android:orientation="vertical"
+	  android:id="@+id/tokenAddStep1"
+	  >
+	  
+	  
+	<TextView
+			android:id="@+id/tokenType"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/tokenType"
+			>
+	</TextView>
+	<Spinner
+			android:id="@+id/tokenTypeSpinner"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:prompt="@string/tokenTypeSpinnerPrompt"
+	>
+	</Spinner>
+	<TextView
+			android:id="@+id/tokenName"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/tokenName"
+	>
+	</TextView>
+	<EditText
+			android:id="@+id/tokenNameEdit"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:textSize="18sp"
+	>
+	</EditText>
+	<TextView
+			android:id="@+id/tokenSerial"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/tokenSerial"
+	>
+	</TextView>
+
+	<EditText
+	    android:id="@+id/tokenSerialEdit"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:inputType="number"
+	    android:textSize="18sp" >
+
+	</EditText>
+	  
+	<TextView android:text="@string/tokenOtp" 
+			  android:id="@+id/tokenOtp" 
+			  android:layout_width="wrap_content" 
+			  android:layout_height="wrap_content"></TextView>
+	
+	<Spinner android:id="@+id/tokenOtpSpinner" 
+			 android:layout_width="wrap_content" 
+			 android:layout_height="wrap_content"
+			 android:prompt="@string/tokenOtpSpinnerPrompt"></Spinner>
+			 
+	<TextView android:text="@string/tokenTimeStep" 
+		      android:id="@+id/tokenTimeStep" 
+		      android:layout_width="wrap_content" 
+		      android:layout_height="wrap_content"
+		      android:visibility="invisible"></TextView>
+		      
+	<Spinner android:id="@+id/tokenTimeStepSpinner" 
+			 android:layout_width="wrap_content" 
+			 android:layout_height="wrap_content"
+			 android:prompt="@string/tokenTimeStepSpinnerPrompt"
+			 android:visibility="invisible" />
+			 
+	<Button android:text="@string/btnAddStep2" 
+			android:id="@+id/btnAddStep2" 
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content"></Button>
+			
+	</LinearLayout>
+	
+	
+	<LinearLayout
+	  xmlns:android="http://schemas.android.com/apk/res/android"
+	  android:layout_width="fill_parent"
+	  android:layout_height="wrap_content"
+	  android:orientation="vertical"
+	  android:id="@+id/tokenAddStep2"
+	  android:visibility="gone">
+	
+	<TextView android:text="@string/tokenSeedMethod" android:id="@+id/tokenSeedMethod" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+
+	<RadioGroup android:id="@+id/radioGroupSeed" android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="vertical">
+		<RadioButton android:text="@string/rbSeedManual" android:checked="true" android:id="@+id/rbSeedManual" android:layout_width="wrap_content" android:layout_height="wrap_content"></RadioButton>
+		<RadioButton android:text="@string/rbSeedRandom" android:id="@+id/rbSeedRandom" android:layout_width="wrap_content" android:layout_height="wrap_content"></RadioButton>
+		<RadioButton android:text="@string/rbSeedPassword" android:id="@+id/rbSeedPassword" android:layout_width="wrap_content" android:layout_height="wrap_content"></RadioButton>
+
+	</RadioGroup>
+	
+	<TextView android:text="@string/tokenSeed" android:id="@+id/tokenSeed" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+	<EditText android:id="@+id/tokenSeedEdit" android:layout_width="fill_parent" android:layout_height="wrap_content"></EditText>
+
+	<Spinner
+	    android:id="@+id/tokenSeedFormat"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:prompt="@string/tokenSeedFormat" />
+
+	<Button android:text="@string/tokenAddComplete" android:id="@+id/tokenAddComplete" android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
+	
+</LinearLayout>
+
+
+</LinearLayout>
+
+</ScrollView>

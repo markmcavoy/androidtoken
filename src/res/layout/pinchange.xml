@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="fill_parent"
+  android:layout_height="wrap_content"
+  android:orientation="vertical"
+  android:padding="5sp">  
+<TextView android:text="@string/pinChangeExistingPin" 
+		  android:id="@+id/pinChangeExistingPin" 
+		  android:layout_width="wrap_content" 
+		  android:layout_height="wrap_content"></TextView>
+
+<EditText
+    android:id="@+id/pinChangeExistingPinEdit"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:inputType="number"
+    android:password="true" >
+</EditText>
+<TextView android:text="@string/pinChangeNew1" 
+		  android:id="@+id/pingChangeNew1" 
+		  android:layout_width="wrap_content" 
+		  android:layout_height="wrap_content"></TextView>
+
+<EditText
+    android:id="@+id/pinChangeNew1Edit"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:inputType="number"
+    android:password="true" >
+</EditText>
+<TextView android:text="@string/pinChangeNew2" 
+		  android:id="@+id/pinChangeNew2" 
+		  android:layout_width="wrap_content" 
+		  android:layout_height="wrap_content"></TextView>
+
+<EditText
+    android:id="@+id/pinChangeNew2Edit"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:inputType="number"
+    android:password="true" >
+</EditText>
+<Button android:text="@string/pinChangeSubmit" 
+		android:id="@+id/pinChangeSubmit" 
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content"></Button>
+</LinearLayout>

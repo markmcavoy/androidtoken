@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="fill_parent"
+  android:layout_height="wrap_content"
+  android:orientation="vertical"
+  android:padding="5sp">
+  
+  	<TextView android:text="@string/pinRemoveExistingPin" 
+		  android:id="@+id/pinRemoveExistingPin" 
+		  android:layout_width="wrap_content" 
+		  android:layout_height="wrap_content"></TextView>
+
+	<EditText
+	    android:id="@+id/pinRemoveExistingPinEdit"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:inputType="number"
+	    android:password="true" >
+</EditText>
+  	<Button android:text="@string/pinRemoveSubmit" 
+		android:id="@+id/pinRemoveSubmit" 
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content"></Button>
+		
+</LinearLayout>
