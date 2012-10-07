@@ -21,12 +21,14 @@
 <string name="rbSeedPassword">Seed from Password</string>
 <string name="tokenSeed">Token Seed Value</string>
 <string name="tokenAddComplete">Complete</string>
-<string name="dialogPositive">Ok</string>
+<string name="dialogPositive">OK</string>
 <string name="dialogNegative">Cancel</string>
 <string name="tokenAddDialogNoName">Token Name is Required</string>
 <string name="tokenAddDialogNoSerial">Token Serial is Required</string>
 <string name="tokenAddDialogNoSeed">Token Seed is Required</string>
-<string name="tokenAddDialogInvalidSeed">Token Seed is Invalid</string>
+<string name="tokenAddDialogInvalidSeedTooShort">Token Seed is weak, the recommended minimum is 128 bits. The seed enter contains %s bits. Create the token anyway?</string>
+<string name="tokenAddDialogInvalidSeedTooShort2">Token Seed is too short</string>
+<string name="tokenAddDialogInvalidSeedNotHex">Token Seed is Invalid, only enter a-f, A-F or 0-9 characters.</string>
 <string name="tokenrowtextserialcaption">S/N:</string>
 <string name="pinChangeExistingPin">Enter Existing PIN</string>
 <string name="pinChangeNew1">New PIN</string>
@@ -52,4 +54,6 @@
 <string name="toastDeleted">Token Deleted</string>
 <string name="toastAdded">Token Added</string>
 <string name="toastInvalidQr">Invalid QR code</string>
+<string name="tokenAddDialogInvalidSeedConvertion">Unable to convert the supplied value to a hex seed</string>
+<string name="tokenAddDialogUnableToSwitchFormat">Unable to switch input format, value entered is invalid</string>
 </resources>

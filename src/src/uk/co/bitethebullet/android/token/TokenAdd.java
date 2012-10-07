@@ -19,7 +19,6 @@
  */
 package uk.co.bitethebullet.android.token;
 
-import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.regex.Matcher;
@@ -30,6 +29,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -49,8 +49,11 @@ public class TokenAdd extends Activity {
 	private static final int DIALOG_STEP1_NO_NAME = 0;
 	private static final int DIALOG_STEP1_NO_SERIAL = 1;
 	private static final int DIALOG_STEP2_NO_SEED = 2;
-	private static final int DIALOG_STEP2_INVALID_SEED = 3;
-	
+	private static final int DIALOG_STEP2_INVALID_SEED_TOO_SHORT = 3;
+	private static final int DIALOG_STEP2_INVALID_SEED_NOT_HEX = 4;
+	private static final int DIALOG_STEP2_SEED_CONVERT_ERROR = 5;
+	private static final int DIALOG_STEP2_UNABLE_TO_SWITCH_FORMAT = 6;
+
 	//defines the define steps the activity can display
 	private static final int ACTIVITY_STEP_ONE = 0;
 	private static final int ACTIVITY_STEP_TWO = 1;
@@ -73,12 +76,14 @@ public class TokenAdd extends Activity {
 	private int mOtpLength;
 	private int mTimeStep;
 	private int mTokenSeedFormat;
+	private Boolean mAcceptWeakSeed;
 	
 	private static final int RANDOM_SEED_LENGTH = 160;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		mAcceptWeakSeed = false;
 		
 		setContentView(R.layout.token_add);
 		
@@ -200,9 +205,14 @@ public class TokenAdd extends Activity {
 			try{				
 				seed = SeedConvertor.ConvertFromBA(SeedConvertor.ConvertFromEncodingToBA(seed, mTokenSeedFormat), arg2);
 			}
-			catch(IOException ex){
+			catch(Exception ex){
 				//todo: MM cancel the change of seed format, we have
 				//some error
+				showDialog(DIALOG_STEP2_UNABLE_TO_SWITCH_FORMAT);
+				
+				Spinner tokenSeedFormat = (Spinner)findViewById(R.id.tokenSeedFormat);
+				tokenSeedFormat.setSelection(mTokenSeedFormat);
+				return;
 			}
 			
 			tokenSeedEdit.setText(seed);
@@ -234,8 +244,20 @@ public class TokenAdd extends Activity {
 			d = createAlertDialog(R.string.tokenAddDialogNoSeed);
 			break;
 			
-		case DIALOG_STEP2_INVALID_SEED:
-			d = createAlertDialog(R.string.tokenAddDialogInvalidSeed);
+		case DIALOG_STEP2_INVALID_SEED_TOO_SHORT:
+			d = createAlertDialog(R.string.tokenAddDialogInvalidSeedTooShort2);
+			break;
+			
+		case DIALOG_STEP2_INVALID_SEED_NOT_HEX:
+			d = createAlertDialog(R.string.tokenAddDialogInvalidSeedNotHex);
+			break;
+			
+		case DIALOG_STEP2_SEED_CONVERT_ERROR:
+			d = createAlertDialog(R.string.tokenAddDialogInvalidSeedConvertion);
+			break;
+			
+		case DIALOG_STEP2_UNABLE_TO_SWITCH_FORMAT:
+			d = createAlertDialog(R.string.tokenAddDialogUnableToSwitchFormat);
 			break;
 			
 		default:
@@ -246,23 +268,52 @@ public class TokenAdd extends Activity {
 	}
 	
 	private Dialog createAlertDialog(int messageId){
+		return this.createAlertDialog(messageId, null, dialogClose, null);
+	}
+	
+	private Dialog createAlertDialog(int messageId, 
+									String additionalMessage, 
+									DialogInterface.OnClickListener positiveClick,
+									DialogInterface.OnClickListener negativeClick){
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage(messageId)
-			   .setCancelable(false)
-			   .setPositiveButton(R.string.dialogPositive, dialogClose);
+			   .setPositiveButton(R.string.dialogPositive, positiveClick);
 		
-		return builder.create();
+		if(negativeClick != null){
+			builder.setNegativeButton(R.string.cancel, negativeClick);
+		}else{
+			builder.setCancelable(false);
+		}
 		
+		//load the resource and optional additional information
+		if(additionalMessage != null){
+			builder.setMessage(String.format(getResources().getString(messageId), additionalMessage));
+		}
+		
+		return builder.create();		
 	}
 	
-	private DialogInterface.OnClickListener dialogClose = new 	DialogInterface.OnClickListener() {
-		
+	private DialogInterface.OnClickListener dialogClose = new DialogInterface.OnClickListener() {		
 		public void onClick(DialogInterface dialog, int which) {
 			dialog.dismiss();
 		}
 	};
 
+	/***
+	 * handles the user accepting the weak seed when we warn then in a dialod
+	 */
+	private DialogInterface.OnClickListener dialogAcceptWeakSeed = new DialogInterface.OnClickListener() {
+		
+		public void onClick(DialogInterface dialog, int which) {
+			Log.d("Android Token", "dialogAcceptWeakSeed called");
+			mAcceptWeakSeed = true;
+			dialog.dismiss();	
+			
+			buttonComplete.onClick(getCurrentFocus());
+			mAcceptWeakSeed = false;
+		}
+	};
 
 	private OnClickListener buttonNext = new OnClickListener() {
 		
@@ -312,7 +363,9 @@ public class TokenAdd extends Activity {
 					//base 64
 					seed = SeedConvertor.ConvertFromBA(SeedConvertor.ConvertFromEncodingToBA(seed, 2), 0);
 				}
-			} catch (IOException e) {
+			} catch (Exception e) {
+				showDialog(DIALOG_STEP2_SEED_CONVERT_ERROR);
+				return;
 			}
 			
 			if(seed.length() == 0){
@@ -326,20 +379,35 @@ public class TokenAdd extends Activity {
 				//validate the length
 				int seedLength = seed.length();
 				
-				if(seedLength < 32){
-					isValid = false;
-					showDialog(DIALOG_STEP2_INVALID_SEED);
-					return;
-				}
-				
 				//valid the chars in the seed
 				Pattern p = Pattern.compile("[A-Fa-f0-9]*");
 				Matcher matcher = p.matcher(seed);
 				
 				if(!matcher.matches()){
-					showDialog(DIALOG_STEP2_INVALID_SEED);
+					showDialog(DIALOG_STEP2_INVALID_SEED_NOT_HEX);
+					return;
+				}
+				
+				if(seedLength < 2){
+					showDialog(DIALOG_STEP2_INVALID_SEED_TOO_SHORT);
 					return;
 				}				
+				else if(seedLength < 32 && !mAcceptWeakSeed){
+					isValid = false;
+					
+					//the seed is shorter than the 128bit minimum as recommended
+					//in the RFC, therefore warn the user but give them then
+					//ability to create a weak seed anyway
+					
+					Dialog d = createAlertDialog(R.string.tokenAddDialogInvalidSeedTooShort, 
+												 "" + seedLength * 4, 
+												 dialogAcceptWeakSeed, 
+												 dialogClose);
+					d.show();
+					
+					return;
+				}
+				
 			}else{
 				//when creating a seed from password we simple sha1 the data then
 				//use that as a seed to to concat with the data again

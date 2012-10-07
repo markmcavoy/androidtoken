@@ -7,11 +7,8 @@ package uk.co.bitethebullet.android.token;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.RectF;
-import android.util.Log;
 import android.view.View;
 
 public class TokenCountDownView extends View {

@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="uk.co.bitethebullet.android.token"
-      android:versionCode="3"
-      android:versionName="2.01" android:installLocation="auto">
+      android:versionCode="4"
+      android:versionName="2.02" 
+      android:installLocation="auto">
 
+    <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="16"/>
+    
+    <supports-screens
+          android:largeScreens="true"
+          android:normalScreens="true"
+          android:smallScreens="true"
+          android:anyDensity="true" />
+    
     <application android:label="@string/app_name" android:icon="@drawable/androidtoken">
         <activity android:name=".TokenList"
                   android:label="@string/app_name">
@@ -22,20 +31,9 @@
 		<activity android:name=".PinChange" android:label="@string/app_name"></activity>
 		<activity android:label="@string/app_name" android:name=".PinRemove"></activity>
 
-		<activity android:name="com.google.ads.AdActivity"
-          android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"/>
+		<activity android:name="com.google.ads.AdActivity"/>
 		<activity android:name="Circle"></activity>
 		     
 	</application>
-        
-	<uses-sdk android:minSdkVersion="7"/>
-	<uses-permission android:name="android.permission.INTERNET"/>
-  	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 	
-	<supports-screens
-          android:largeScreens="true"
-          android:normalScreens="true"
-          android:smallScreens="true"
-          android:anyDensity="true" />
-          
 </manifest> 

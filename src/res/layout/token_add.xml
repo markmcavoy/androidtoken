@@ -62,7 +62,7 @@
 	    android:id="@+id/tokenSerialEdit"
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
-	    android:inputType="number"
+	    android:inputType="text"
 	    android:textSize="18sp" >
 
 	</EditText>

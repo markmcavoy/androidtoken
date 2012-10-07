@@ -23,15 +23,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import javax.crypto.spec.IvParameterSpec;
-
-import com.google.ads.AdRequest;
-import com.google.ads.AdSize;
-import com.google.ads.AdView;
 
 import uk.co.bitethebullet.android.token.util.SeedConvertor;
 import uk.co.bitethebullet.android.token.zxing.IntentIntegrator;
@@ -39,27 +32,21 @@ import uk.co.bitethebullet.android.token.zxing.IntentResult;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Application;
 import android.app.Dialog;
 import android.app.ListActivity;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -67,7 +54,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -113,8 +99,6 @@ public class TokenList extends ListActivity {
 	
 	private TokenAdapter mtokenAdaptor = null;
 	
-	private AdView adView;
-	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -151,20 +135,7 @@ public class TokenList extends ListActivity {
         
         mHandler = new Handler();
         
-        
-        //render the ad to the bottom of the layout
-        adView = new AdView(this, AdSize.BANNER, "a14ee3663c2a098");
-        RelativeLayout layout = (RelativeLayout)findViewById(R.id.parentLayout);
-        
-        RelativeLayout.LayoutParams relLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT,
-        																				LayoutParams.WRAP_CONTENT);
-        relLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        
-        layout.addView(adView, relLayoutParams);
-        AdRequest adRequest = new AdRequest();
-        adRequest.addTestDevice(AdRequest.TEST_EMULATOR);
-        adView.loadAd(adRequest);
-        
+                
         ListView lv = (ListView)findViewById(android.R.id.list);
         lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
@@ -178,7 +149,6 @@ public class TokenList extends ListActivity {
 
 	@Override
 	protected void onDestroy() {
-		adView.destroy();
 		super.onDestroy();
 		mTokenDbHelper.close();
 	}

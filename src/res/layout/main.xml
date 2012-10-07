@@ -4,7 +4,7 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:visibility="visible">    
+    android:visibility="visible">
         
     <LinearLayout
     android:orientation="vertical"
@@ -34,7 +34,7 @@
     android:padding="5sp"> 
     
     	<TextView  
-			android:id="@+id/mainPin"
+			android:id="@+id/mainPinText"
 		    android:layout_width="fill_parent" 
 		    android:layout_height="wrap_content" 
 		    android:text="@string/pinChangeExistingPin"
