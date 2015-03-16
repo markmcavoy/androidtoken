@@ -11,4 +11,5 @@ The project supports both http://tools.ietf.org/html/rfc4226 (Event Tokens) and 
 Screen Shots
 ------------
 
-[http://androidtoken.googlecode.com/svn/wiki/screenshot1.png] [http://androidtoken.googlecode.com/svn/wiki/screenshot2.png]
+![alt tag](https://github.com/markmcavoy/androidtoken/blob/wiki/screenshot1.png)
+![alt tag](https://github.com/markmcavoy/androidtoken/blob/wiki/screenshot2.png)
