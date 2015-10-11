@@ -5,6 +5,11 @@ import uk.co.bitethebullet.android.token.ITokenMeta;
 import uk.co.bitethebullet.android.token.OtpAuthUriException;
 import uk.co.bitethebullet.android.token.TokenList;
 import uk.co.bitethebullet.android.token.TokenMetaData;
+import uk.co.bitethebullet.android.token.util.SeedConvertor;
+
+import java.io.IOException;
+import java.io.UTFDataFormatException;
+
 import android.content.Context;
 import android.test.InstrumentationTestCase;
 
@@ -54,6 +59,27 @@ public class ParseUrlTests extends InstrumentationTestCase {
 		
 		Assert.assertEquals("alice@google.com", token.getName());
 		Assert.assertEquals("JBSWY3DPEHPK3PXP", token.getSecretBase32());
+		Assert.assertEquals(10, token.getCounter());
+		Assert.assertEquals(6, token.getDigits());
+		Assert.assertEquals(TokenMetaData.HOTP_TOKEN, token.getTokenType());
+	}
+	
+	public void testHotpWithPadding() throws OtpAuthUriException{
+		String url = "otpauth://hotp/alice@google.com?secret=MFRGGZBRGIZTINJWG44A====&counter=10";
+		
+		ITokenMeta token = TokenList.parseOtpAuthUrl(getContext(), url);
+		
+		//the above base32 input should equate to 'abcd12345678'
+		byte[] seed = null;
+		try {
+			seed = SeedConvertor.ConvertFromEncodingToBA(token.getSecretBase32(), SeedConvertor.BASE32_FORMAT);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		Assert.assertEquals("alice@google.com", token.getName());
+		Assert.assertEquals("abcd12345678", new String(seed));
 		Assert.assertEquals(10, token.getCounter());
 		Assert.assertEquals(6, token.getDigits());
 		Assert.assertEquals(TokenMetaData.HOTP_TOKEN, token.getTokenType());
@@ -124,6 +150,18 @@ public class ParseUrlTests extends InstrumentationTestCase {
 		Assert.assertEquals("mark", token.getName());
 		Assert.assertEquals("JBSWY3DPEHPK3PXP", token.getSecretBase32());
 		Assert.assertEquals(8, token.getDigits());
+		Assert.assertEquals(30, token.getTimeStep());
+		Assert.assertEquals(TokenMetaData.TOTP_TOKEN, token.getTokenType());
+	}
+	
+	public void testTotpPaddingTokenName() throws OtpAuthUriException, IOException{
+		String url = "otpauth://totp/github.com/madeupuser?secret=mfrggzbrgiztinjwg44a====";
+		
+		ITokenMeta token = TokenList.parseOtpAuthUrl(getContext(), url);
+		
+		Assert.assertEquals("github.com/madeupuser", token.getName());
+		Assert.assertEquals("abcd12345678", new String(SeedConvertor.ConvertFromEncodingToBA(token.getSecretBase32(), SeedConvertor.BASE32_FORMAT)));
+		Assert.assertEquals(6, token.getDigits());
 		Assert.assertEquals(30, token.getTimeStep());
 		Assert.assertEquals(TokenMetaData.TOTP_TOKEN, token.getTokenType());
 	}

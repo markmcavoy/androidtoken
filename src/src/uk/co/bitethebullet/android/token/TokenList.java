@@ -454,7 +454,13 @@ public class TokenList extends ListActivity {
 		String[] parameters = url.substring(url.indexOf("?") + 1).split("&");
 		
 		for(int i = 0; i < parameters.length; i++){
-			String[] paraDetail = parameters[i].split("=");
+			String[] paraDetail = new String[2];
+			
+			//get the key
+			paraDetail[0] = parameters[i].substring(0, parameters[i].indexOf("="));
+			
+			//get the value
+			paraDetail[1] = parameters[i].substring(parameters[i].indexOf("=") + 1, parameters[i].length());
 			
 			//read the parameter and work out if its
 			//a valid parameter, if not just ignore
