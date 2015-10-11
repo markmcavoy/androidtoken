@@ -36,7 +36,7 @@ public class SeedConvertor {
 		}else if(currentFormat == 1){
 			//base 32
 			Base32 base32 = new Base32();
-			return base32.decodeBytes(input);
+			return base32.decodeBytes(input.toUpperCase());
 		}else if(currentFormat == 2){
 			//base64
 			return Base64.decode(input);

@@ -90,7 +90,7 @@ public class TokenAdd extends Activity {
 		loadSpinnerArrayData(R.id.tokenTypeSpinner, R.array.tokenType);
 		loadSpinnerArrayData(R.id.tokenOtpSpinner, R.array.otpLength);
 		loadSpinnerArrayData(R.id.tokenTimeStepSpinner, R.array.timeStep);
-		loadSpinnerArrayData(R.id.tokenSeedFormat, R.array.tokenSeedFormatType);
+		loadSpinnerArrayData(R.id.tokenSeedFormat, R.array.tokenSeedFormatType, 1);
 		
 		if(savedInstanceState != null){
 			mCurrentActivityStep = savedInstanceState.getInt(KEY_ACTIVITY_STATE);
@@ -202,11 +202,14 @@ public class TokenAdd extends Activity {
 			EditText tokenSeedEdit = (EditText)findViewById(R.id.tokenSeedEdit);
 			String seed = tokenSeedEdit.getText().toString();
 			
-			try{				
-				seed = SeedConvertor.ConvertFromBA(SeedConvertor.ConvertFromEncodingToBA(seed, mTokenSeedFormat), arg2);
+			try{
+				//only convert if we have something entered
+				if(seed.length() > 0) {
+					seed = SeedConvertor.ConvertFromBA(SeedConvertor.ConvertFromEncodingToBA(seed, mTokenSeedFormat), arg2);
+				}
 			}
 			catch(Exception ex){
-				//todo: MM cancel the change of seed format, we have
+				//cancel the change of seed format, if have
 				//some error
 				showDialog(DIALOG_STEP2_UNABLE_TO_SWITCH_FORMAT);
 				
@@ -478,7 +481,19 @@ public class TokenAdd extends Activity {
 			
 			if(rb.getId() == R.id.rbSeedRandom){
 				EditText seedEdit = (EditText)findViewById(R.id.tokenSeedEdit);
-				seedEdit.setText(HotpToken.generateNewSeed(RANDOM_SEED_LENGTH));
+
+				try{
+					//create a new random seed, this will be in hex format.
+					//see if we need to convert this to whatever we have input
+					//format selected as
+					String hexSeed = HotpToken.generateNewSeed(RANDOM_SEED_LENGTH);
+					byte[] ba = SeedConvertor.ConvertFromEncodingToBA(hexSeed,
+																		SeedConvertor.HEX_FORMAT);
+
+					seedEdit.setText(SeedConvertor.ConvertFromBA(ba, mTokenSeedFormat));
+				}catch(Exception ex){
+				}
+
 			}
 			
 			Spinner tokenSeedFormat = (Spinner)findViewById(R.id.tokenSeedFormat);
@@ -490,12 +505,22 @@ public class TokenAdd extends Activity {
 			}
 		}
 	};
-	
+
 	private void loadSpinnerArrayData(int spinnerId, int arrayData){
+		loadSpinnerArrayData(spinnerId, arrayData, -1);
+	}
+
+	private void loadSpinnerArrayData(int spinnerId, int arrayData, int selectedPosition){
 		Spinner spinner = (Spinner)findViewById(spinnerId);
-		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, arrayData, android.R.layout.simple_spinner_item);
+		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+																				arrayData,
+																				android.R.layout.simple_spinner_item);
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		spinner.setAdapter(adapter);
+
+		if(selectedPosition >= 0) {
+			spinner.setSelection(selectedPosition);
+		}
 	}
 
 

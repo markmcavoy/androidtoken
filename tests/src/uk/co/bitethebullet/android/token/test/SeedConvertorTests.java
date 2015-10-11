@@ -81,6 +81,25 @@ public class SeedConvertorTests extends TestCase {
 		}
 	}
 
+	public void testConvertLowerCaseBase32ToBA()
+	{
+		try {
+			byte[] rawBytes = SeedConvertor.ConvertFromEncodingToBA(base32Value.toLowerCase(), 1);
+			byte[] expectedBytes = ascii.getBytes();
+
+			for(int i = 0; i < rawBytes.length; i++){
+				if(rawBytes[i] != expectedBytes[i])
+					Assert.fail();
+			}
+
+			Assert.assertFalse(false);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+			Assert.fail();
+		}
+	}
+
 	public void testConvertBase64ToBA(){
 		try {
 			byte[] rawBytes = SeedConvertor.ConvertFromEncodingToBA(base64Value, 2);			
