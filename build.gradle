@@ -1,0 +1,52 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:1.2.3'
+    }
+}
+repositories {
+    //mavenLocal()
+ //   jcenter()
+    mavenCentral()
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.2'
+}
+
+apply plugin: 'com.android.application'
+
+
+android {
+    compileSdkVersion 'android-17'
+    buildToolsVersion '23.0.3'
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFile getDefaultProguardFile('proguard-android.txt')
+        }
+    }
+
+    defaultConfig {
+        minSdkVersion 8
+        targetSdkVersion 24
+        versionCode 6
+        versionName "2.11"
+ //       testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    packagingOptions {
+        exclude 'LICENSE.txt'
+    }
+}
+
+dependencies {
+    testCompile 'junit:junit:4.12'
+
+    androidTestCompile 'junit:junit:4.12'
+    //androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2'
+    androidTestCompile 'com.android.support.test:runner:0.3'
+}
