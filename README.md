@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/neuhalje/androidtoken?branch=master)](https://travis-ci.org/neuhalje/androidtoken)
+
 Android Token
 =============
 Android Token is a project to create http://www.openauthentication.org/ software tokens for the Android platform. Turning a mobile phone into a One Time Password (OTP) generation device which can be used in the place of hardware tokens.
