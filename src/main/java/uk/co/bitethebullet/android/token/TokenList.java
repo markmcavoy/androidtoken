@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import android.annotation.TargetApi;
+import android.content.*;
 import android.os.Build;
 import android.view.*;
 import uk.co.bitethebullet.android.token.util.SeedConvertor;
@@ -36,9 +38,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
@@ -206,8 +205,11 @@ public class TokenList extends ListActivity {
 		if (tokenClicked) {
 
 			switch (item.getItemId()) {
-				case R.id.context_edit_token:
-					//editNote(info.id);
+				case R.id.context_copy_token_seed_to_clipboard:
+					copyTokenSeedToClipboard(token);
+					return true;
+				case R.id.context_show_token_seed_as_dialog:
+					showTokenSeedInDialog(token);
 					return true;
 				case R.id.context_delete_token:
 					deleteToken(token);
@@ -219,6 +221,37 @@ public class TokenList extends ListActivity {
 			return super.onContextItemSelected(item);
 		}
 	}
+
+	private boolean isClipboardSupported() {
+		return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB);
+	}
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	private void copyTokenSeedToClipboard(IToken token) {
+		if (!isClipboardSupported()) {
+			return;
+		}
+
+		ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+		clipboard.setPrimaryClip(ClipData.newPlainText( "Seed for " + token.getName(), token.getSeed()));
+
+		Toast toast = Toast.makeText(this, getString(R.string.copy_token_seed_to_clipboard_ok, token.getName(),token.getSeed() ),Toast.LENGTH_SHORT);
+		toast.show();
+	}
+	private void showTokenSeedInDialog(IToken token) {
+		//prompt the user to see if they want to delete the current
+		//selected token
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+
+		builder.setTitle(R.string.app_name)
+				.setMessage(getString(R.string.dialog_show_seed_format, token.getName(), token.getSeed()))
+				.setIcon(android.R.drawable.ic_dialog_info)
+				.setPositiveButton(R.string.dialogPositive, null);
+
+		builder.show();
+	}
+
+
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
