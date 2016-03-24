@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import android.os.Build;
+import android.view.*;
 import uk.co.bitethebullet.android.token.util.SeedConvertor;
 import uk.co.bitethebullet.android.token.zxing.IntentIntegrator;
 import uk.co.bitethebullet.android.token.zxing.IntentResult;
@@ -41,11 +43,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
@@ -137,13 +134,7 @@ public class TokenList extends ListActivity {
         
                 
         ListView lv = (ListView)findViewById(android.R.id.list);
-        lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-
-			public boolean onItemLongClick(AdapterView<?> arg0, View v,
-					int pos, long id) {
-				return onLongListItemClick(v,pos,id);
-			}
-		});
+		registerForContextMenu(lv);
     }
     
 
@@ -182,6 +173,53 @@ public class TokenList extends ListActivity {
 	}
 
 
+	private IToken tokenAtPos(int position) {
+		IToken token = (IToken) getListAdapter().getItem(position);
+		return token;
+	}
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+
+		if (v.getId() == android.R.id.list) {
+			AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+			IToken token = tokenAtPos(info.position);
+
+			if (token != null) {
+				MenuInflater inflater = getMenuInflater();
+				inflater.inflate(R.menu.token_context_menu, menu);
+
+
+				String title = token.getName();
+				menu.setHeaderTitle(title);
+			}
+		}
+	}
+
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+		IToken token = tokenAtPos(info.position);
+
+		boolean tokenClicked = token != null;
+
+		if (tokenClicked) {
+
+			switch (item.getItemId()) {
+				case R.id.context_edit_token:
+					//editNote(info.id);
+					return true;
+				case R.id.context_delete_token:
+					deleteToken(token);
+					return true;
+				default:
+					return super.onContextItemSelected(item);
+			}
+		} else {
+			return super.onContextItemSelected(item);
+		}
+	}
+
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
@@ -209,22 +247,20 @@ public class TokenList extends ListActivity {
 	};
 	
 	
-	protected boolean onLongListItemClick(View v, int pos, final long id) {
-	    Log.i("", "onLongListItemClick id=" + id);
+	protected void deleteToken(final IToken token) {
+	    Log.i("", "deleteToken id=" + token.getId());
 	    
 	    //prompt the user to see if they want to delete the current
 	    //selected token
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		
-		Cursor c = mTokenDbHelper.fetchAllTokens();
-		startManagingCursor(c);
-					
+
+
 		builder.setTitle(R.string.app_name)
-			   .setMessage(R.string.confirmDelete)
+			   .setMessage(getString(R.string.confirmDelete, token.getName()))
 			   .setIcon(android.R.drawable.ic_dialog_alert)
 			   .setPositiveButton(R.string.dialogPositive, new DialogInterface.OnClickListener() {				
 					public void onClick(DialogInterface dialog, int which) {						
-						mTokenDbHelper.deleteToken(id);
+						mTokenDbHelper.deleteToken(token.getId());
 						
 						Toast.makeText(getApplicationContext(), R.string.toastDeleted, Toast.LENGTH_SHORT).show();
 						
@@ -235,9 +271,6 @@ public class TokenList extends ListActivity {
 			   .setNegativeButton(R.string.dialogNegative, null);
 		
 		builder.show();
-	    
-	    
-	    return true;
 	}
 	
 	private Dialog createAlertDialog(int messageId){

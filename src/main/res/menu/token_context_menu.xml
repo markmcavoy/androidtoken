@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/context_edit_token"
+        android:icon="@drawable/androidtoken"
+        android:title="@string/context_edit_token" />
+    <item android:id="@+id/context_delete_token"
+        android:icon="@android:drawable/ic_delete"
+        android:title="@string/context_delete_token"/>
+
+</menu>

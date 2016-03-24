@@ -50,10 +50,12 @@
 <string name="install">Install</string>
 <string name="install_zxing_title">Install Barcode Scanner?</string>
 <string name="install_zxing_caption">To read barcode you need need install the ZXING barcode scanner app.</string>
-<string name="confirmDelete">Are you sure you want to delete this token?</string>
+<string name="confirmDelete">Are you sure you want to delete the token %1$s?</string>
 <string name="toastDeleted">Token Deleted</string>
 <string name="toastAdded">Token Added</string>
 <string name="toastInvalidQr">Invalid QR code</string>
 <string name="tokenAddDialogInvalidSeedConvertion">Unable to convert the supplied value to a hex seed</string>
 <string name="tokenAddDialogUnableToSwitchFormat">Unable to switch input format, value entered is invalid</string>
+    <string name="context_edit_token">Edit this token</string>
+    <string name="context_delete_token">Delete this token</string>
 </resources>
