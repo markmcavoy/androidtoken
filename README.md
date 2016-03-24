@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/neuhalje/androidtoken?branch=master)](https://travis-ci.org/neuhalje/androidtoken)
+[![Build Status](https://travis-ci.org/neuhalje/androidtoken.svg?branch=master)](https://travis-ci.org/neuhalje/androidtoken)
 
 Android Token
 =============
