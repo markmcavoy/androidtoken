@@ -21,11 +21,12 @@ package uk.co.bitethebullet.android.token.test;
 
 import java.io.IOException;
 
+import org.junit.Test;
 import uk.co.bitethebullet.android.token.util.SeedConvertor;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
-public class SeedConvertorTests extends TestCase {
+public class SeedConvertorTests  {
 
 	String ascii = "bitethebullet.uk 1234";
 	String hexValue = "6269746574686562756c6c65742e756b2031323334";
@@ -44,7 +45,7 @@ public class SeedConvertorTests extends TestCase {
 //		
 //	}
 	
-	
+	@Test
 	public void testConvertHexToBA(){
 		try {
 			byte[] rawBytes = SeedConvertor.ConvertFromEncodingToBA(hexValue, 0);			
@@ -62,7 +63,8 @@ public class SeedConvertorTests extends TestCase {
 			Assert.fail();
 		}
 	}
-	
+
+	@Test
 	public void testConvertBase32ToBA(){
 		try {
 			byte[] rawBytes = SeedConvertor.ConvertFromEncodingToBA(base32Value, 1);			
@@ -81,6 +83,7 @@ public class SeedConvertorTests extends TestCase {
 		}
 	}
 
+	@Test
 	public void testConvertLowerCaseBase32ToBA()
 	{
 		try {
@@ -100,6 +103,7 @@ public class SeedConvertorTests extends TestCase {
 		}
 	}
 
+	@Test
 	public void testConvertBase64ToBA(){
 		try {
 			byte[] rawBytes = SeedConvertor.ConvertFromEncodingToBA(base64Value, 2);			

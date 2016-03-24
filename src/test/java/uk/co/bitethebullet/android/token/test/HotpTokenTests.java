@@ -20,14 +20,16 @@
 
 package uk.co.bitethebullet.android.token.test;
 
+import org.junit.Test;
 import uk.co.bitethebullet.android.token.HotpToken;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
-public class HotpTokenTests extends TestCase {
+public class HotpTokenTests {
 
 	private final static String SEED = "3132333435363738393031323334353637383930";
-	
+
+	@Test
 	public void testOtpGeneration(){
 		HotpToken token = new HotpToken("mark", "123456789", SEED, 0, 6);
 		
@@ -35,7 +37,8 @@ public class HotpTokenTests extends TestCase {
 		
 		Assert.assertEquals("755224", otp);
 	}
-	
+
+	@Test
 	public void testOtpGeneration2(){
 		HotpToken token = new HotpToken("mark", "123456789", SEED, 1, 6);
 		
@@ -43,7 +46,8 @@ public class HotpTokenTests extends TestCase {
 		
 		Assert.assertEquals("287082", otp);
 	}
-	
+
+	@Test
 	public void testSeed128(){
 		
 		for(int i = 0; i < 100; i++){
@@ -52,8 +56,9 @@ public class HotpTokenTests extends TestCase {
 			Assert.assertEquals(32, seed.length());			
 		}
 	}
-	
-	
+
+
+	@Test
 	public void testSeed160(){
 		for(int i = 0; i < 100; i++){
 			
