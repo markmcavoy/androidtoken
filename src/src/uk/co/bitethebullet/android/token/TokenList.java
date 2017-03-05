@@ -120,8 +120,13 @@ public class TokenList extends ListActivity {
         mMainList = (LinearLayout)findViewById(R.id.mainList);
         
         Button loginBtn = (Button)findViewById(R.id.mainLogin);
-        
         loginBtn.setOnClickListener(validatePin);
+
+		Button addTokenBtn = (Button)findViewById(R.id.addButton);
+		addTokenBtn.setOnClickListener(addNewTokenListener);
+
+		Button scanTokenBtn = (Button)findViewById(R.id.scanButton);
+		scanTokenBtn.setOnClickListener(scanNewTokenListener);
         
         if(PinManager.hasPinDefined(this) & !mHasPassedPin){
         	mMainPin.setVisibility(View.VISIBLE);
@@ -188,6 +193,21 @@ public class TokenList extends ListActivity {
 		outState.putBoolean(KEY_HAS_PASSED_PIN, mHasPassedPin);
 		outState.putLong(KEY_SELECTED_TOKEN_ID, mSelectedTokenId);
 	}
+
+	private OnClickListener addNewTokenListener = new OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			createToken();
+		}
+	};
+
+
+	private OnClickListener scanNewTokenListener = new OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			scanQR();
+		}
+	};
 	
 	private OnClickListener validatePin = new 	OnClickListener() {
 		

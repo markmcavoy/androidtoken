@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="noTokens">No Tokens Defined</string>
-    <string name="app_name">Android Token</string>
+    <string name="addNewToken">Add New Token</string>
+    <string name="scanNewToken">Scan QR Token</string>
+<string name="noTokens">No Tokens Defined</string>
+<string name="app_name">Android Token</string>
 <string name="menu_add_token">Add Token</string>
 <string name="menu_pin_change">Change PIN</string>
 <string name="menu_pin_remove">Remove Pin</string>
