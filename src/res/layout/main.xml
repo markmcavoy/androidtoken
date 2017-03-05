@@ -74,9 +74,8 @@
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:textSize="18sp"
-			android:password="true"
 			android:layout_marginTop="10dip"
-			android:inputType="number"
+			android:inputType="numberPassword"
 		 />
 		 
 		<Button android:text="@string/mainLogin" 

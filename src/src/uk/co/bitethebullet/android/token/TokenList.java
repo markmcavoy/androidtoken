@@ -42,11 +42,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.*;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -57,6 +59,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.ImageView;
 import android.widget.Toast;
+import android.widget.TextView.OnEditorActionListener;
 
 /**
  * Main entry point into Android Token application
@@ -104,8 +107,8 @@ public class TokenList extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        
-        //check if we need to restore from a saveinstancestate
+
+		//check if we need to restore from a saveinstancestate
         if(savedInstanceState != null){
         	mHasPassedPin = savedInstanceState.getBoolean(KEY_HAS_PASSED_PIN);
         	mSelectedTokenId = savedInstanceState.getLong(KEY_SELECTED_TOKEN_ID);
@@ -131,15 +134,32 @@ public class TokenList extends ListActivity {
         if(PinManager.hasPinDefined(this) & !mHasPassedPin){
         	mMainPin.setVisibility(View.VISIBLE);
         	mMainList.setVisibility(View.GONE);
+
+			//set the focus and show the keyboard
+			//so that they can edit the pin without
+			//having to click anything
+			EditText mainPinEdit = (EditText)findViewById(R.id.mainPinEdit);
+			mainPinEdit.requestFocus();
+			mainPinEdit.requestFocusFromTouch();
+			showPINVirturalKeyboard();
+
+
+			mainPinEdit.setOnEditorActionListener(new OnEditorActionListener() {
+				public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+					if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
+						Log.i("PIN","Enter pressed");
+					}
+					return false;
+				}
+			});
         }else{
         	mMainList.setVisibility(View.VISIBLE);
         	mMainPin.setVisibility(View.GONE);
         	mHasPassedPin = true;
         	fillData();
         }
-        
-        mHandler = new Handler();
-        
+
+		mHandler = new Handler();
                 
         ListView lv = (ListView)findViewById(android.R.id.list);
         lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -150,7 +170,22 @@ public class TokenList extends ListActivity {
 			}
 		});
     }
-    
+
+	private void showPINVirturalKeyboard(){
+		Timer timer = new Timer();
+		timer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				InputMethodManager m = (InputMethodManager)TokenList.this.getSystemService(Context.INPUT_METHOD_SERVICE);
+
+				if(m != null){
+					EditText mainPinEdit = (EditText)findViewById(R.id.mainPinEdit);
+					m.showSoftInput(mainPinEdit, InputMethodManager.SHOW_IMPLICIT);
+				}
+			}
+
+		}, 800);
+	}
 
 	@Override
 	protected void onDestroy() {
@@ -200,7 +235,6 @@ public class TokenList extends ListActivity {
 			createToken();
 		}
 	};
-
 
 	private OnClickListener scanNewTokenListener = new OnClickListener() {
 		@Override
