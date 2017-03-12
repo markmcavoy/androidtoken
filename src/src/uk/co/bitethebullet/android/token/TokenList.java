@@ -116,7 +116,7 @@ public class TokenList extends ListActivity {
         
         mTokenDbHelper = new TokenDbAdapter(this);
         mTokenDbHelper.open();
-        
+
         //if we have a pin defined, need to enter that first before allow
         //the user to see the tokens        
         mMainPin = (LinearLayout)findViewById(R.id.mainPin);
@@ -147,7 +147,8 @@ public class TokenList extends ListActivity {
 			mainPinEdit.setOnEditorActionListener(new OnEditorActionListener() {
 				public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 					if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
-						Log.i("PIN","Enter pressed");
+						Button mainLogin = (Button)findViewById(R.id.mainLogin);
+						mainLogin.performClick();
 					}
 					return false;
 				}
@@ -184,7 +185,7 @@ public class TokenList extends ListActivity {
 				}
 			}
 
-		}, 800);
+		}, 1000);
 	}
 
 	@Override
@@ -250,6 +251,10 @@ public class TokenList extends ListActivity {
 			String pin = ((EditText)findViewById(R.id.mainPinEdit)).getText().toString();
 			
 			if(PinManager.validatePin(v.getContext(), pin)){
+				//hide any softkey keyboard
+				InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+				imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+
 				//then display the list view
 				mMainList.setVisibility(View.VISIBLE);
 				mMainPin.setVisibility(View.GONE);
