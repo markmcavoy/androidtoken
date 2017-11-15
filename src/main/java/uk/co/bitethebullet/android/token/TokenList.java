@@ -83,10 +83,10 @@ public class TokenList extends ListActivity {
 	private static final int DIALOG_OTP = 1;
 	private static final int DIALOG_DELETE_TOKEN = 2;
 	
-	private static final String KEY_HAS_PASSED_PIN = "pinValid";
+	public static final String KEY_PIN_SEED_MASK = "pinSeedMask";
 	private static final String KEY_SELECTED_TOKEN_ID = "selectedTokenId";
 		
-	private Boolean mHasPassedPin = false;
+	private byte[] mPinSeedMask = null;
 	private Long mSelectedTokenId = Long.parseLong("-1");
 	private Long mTokenToDeleteId = Long.parseLong("-1");
 	private Timer mTimer = null;
@@ -107,7 +107,7 @@ public class TokenList extends ListActivity {
         
         //check if we need to restore from a saveinstancestate
         if(savedInstanceState != null){
-        	mHasPassedPin = savedInstanceState.getBoolean(KEY_HAS_PASSED_PIN);
+        	mPinSeedMask = savedInstanceState.getByteArray(KEY_PIN_SEED_MASK);
         	mSelectedTokenId = savedInstanceState.getLong(KEY_SELECTED_TOKEN_ID);
         }
         
@@ -123,13 +123,13 @@ public class TokenList extends ListActivity {
         
         loginBtn.setOnClickListener(validatePin);
         
-        if(PinManager.hasPinDefined(this) & !mHasPassedPin){
+        if(PinManager.hasPinDefined(this) && mPinSeedMask == null){
         	mMainPin.setVisibility(View.VISIBLE);
         	mMainList.setVisibility(View.GONE);
         }else{
         	mMainList.setVisibility(View.VISIBLE);
         	mMainPin.setVisibility(View.GONE);
-        	mHasPassedPin = true;
+        	mPinSeedMask = new byte[0];
         	fillData();
         }
         
@@ -185,7 +185,7 @@ public class TokenList extends ListActivity {
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putBoolean(KEY_HAS_PASSED_PIN, mHasPassedPin);
+		outState.putByteArray(KEY_PIN_SEED_MASK, mPinSeedMask);
 		outState.putLong(KEY_SELECTED_TOKEN_ID, mSelectedTokenId);
 	}
 	
@@ -195,11 +195,11 @@ public class TokenList extends ListActivity {
 			
 			String pin = ((EditText)findViewById(R.id.mainPinEdit)).getText().toString();
 			
-			if(PinManager.validatePin(v.getContext(), pin)){
+            mPinSeedMask = PinManager.validatePinGetSeedMask(v.getContext(), pin);
+			if(mPinSeedMask != null) {
 				//then display the list view
 				mMainList.setVisibility(View.VISIBLE);
 				mMainPin.setVisibility(View.GONE);
-				mHasPassedPin = true;
 				fillData();
 			}else{
 				//display an alert
@@ -216,9 +216,6 @@ public class TokenList extends ListActivity {
 	    //selected token
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		
-		Cursor c = mTokenDbHelper.fetchAllTokens();
-		startManagingCursor(c);
-					
 		builder.setTitle(R.string.app_name)
 			   .setMessage(R.string.confirmDelete)
 			   .setIcon(android.R.drawable.ic_dialog_alert)
@@ -343,17 +340,20 @@ public class TokenList extends ListActivity {
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		
-		if(mHasPassedPin){
+		if(mPinSeedMask != null){
 			menu.findItem(MENU_PIN_REMOVE_ID).setEnabled(PinManager.hasPinDefined(this));
 		}
 		
 		//if we have no tokens disable the delete token option
 		menu.findItem(MENU_DELETE_TOKEN_ID).setEnabled(this.getListView().getCount() > 0);
 		
-		return mHasPassedPin;
+		return mPinSeedMask != null;
 	}
 
 	private void fillData() {
+
+        if (mPinSeedMask == null)
+            return;
 		
 		if(mtokenAdaptor == null)
 			mtokenAdaptor = new TokenAdapter(this, mTokenDbHelper);
@@ -383,6 +383,11 @@ public class TokenList extends ListActivity {
 			fillData();
 			toastRId = R.string.toastAdded;
 		}
+		else if ((requestCode == ACTIVITY_REMOVE_PIN || requestCode == ACTIVITY_CHANGE_PIN) && resultCode == Activity.RESULT_OK) {
+            mPinSeedMask = data.getByteArrayExtra(KEY_PIN_SEED_MASK);
+            if (mPinSeedMask == null)
+                mPinSeedMask = new byte[0];
+        }
 		
 		if(toastRId > 0)
 			Toast.makeText(getApplicationContext(), toastRId, Toast.LENGTH_SHORT).show();
@@ -549,6 +554,7 @@ public class TokenList extends ListActivity {
 	 */
 	private void createToken() {
 		Intent intent = new Intent(this, TokenAdd.class);
+        intent.putExtra(KEY_PIN_SEED_MASK, mPinSeedMask);
 		startActivityForResult(intent, ACTIVITY_ADD_TOKEN);		
 	}
 
@@ -572,7 +578,7 @@ public class TokenList extends ListActivity {
 
 	private String generateOtp(long tokenId) {		
 		Cursor cursor = mTokenDbHelper.fetchToken(tokenId);
-		IToken token = TokenFactory.CreateToken(cursor);
+		IToken token = TokenFactory.CreateToken(cursor, mPinSeedMask);
 		cursor.close();
 		
 		String otp = token.generateOtp();
@@ -625,10 +631,10 @@ public class TokenList extends ListActivity {
 		
 		public void onClick(DialogInterface dialog, int which) {
 			Cursor c = mTokenDbHelper.fetchAllTokens();
-			startManagingCursor(c);
 			
 			c.moveToPosition(which);
 			mTokenToDeleteId = c.getLong(c.getColumnIndexOrThrow(TokenDbAdapter.KEY_TOKEN_ROWID));			
+            c.close();
 		}
 	};
 	
@@ -643,7 +649,6 @@ public class TokenList extends ListActivity {
 			mDbAdapter = dbAdapter;
 			
 			Cursor cursor = mDbAdapter.fetchAllTokens();
-			startManagingCursor(cursor);
 			
 			//read all the tokens we have and put them into a list
 			//this will save hitting the db everytime we draw the
@@ -653,9 +658,11 @@ public class TokenList extends ListActivity {
 			
 			cursor.moveToFirst();
 	        while (!cursor.isAfterLast()) {
-	            mTokens.add(TokenFactory.CreateToken(cursor));
+                IToken token = TokenFactory.CreateToken(cursor, mPinSeedMask);
+	            mTokens.add(token);
 	            cursor.moveToNext();
 	        }
+            cursor.close();
 			
 		}
 		

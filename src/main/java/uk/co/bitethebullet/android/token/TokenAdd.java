@@ -77,6 +77,7 @@ public class TokenAdd extends Activity {
 	private int mTimeStep;
 	private int mTokenSeedFormat;
 	private Boolean mAcceptWeakSeed;
+	private byte[] mSeedMask;
 	
 	private static final int RANDOM_SEED_LENGTH = 160;
 	
@@ -91,9 +92,10 @@ public class TokenAdd extends Activity {
 		loadSpinnerArrayData(R.id.tokenOtpSpinner, R.array.otpLength);
 		loadSpinnerArrayData(R.id.tokenTimeStepSpinner, R.array.timeStep);
 		loadSpinnerArrayData(R.id.tokenSeedFormat, R.array.tokenSeedFormatType, 1);
-		
+
 		if(savedInstanceState != null){
 			mCurrentActivityStep = savedInstanceState.getInt(KEY_ACTIVITY_STATE);
+            mSeedMask = getIntent().getByteArrayExtra(TokenList.KEY_PIN_SEED_MASK);
 			
 			int tokenType = savedInstanceState.getInt(KEY_TOKEN_TYPE);
 			int otpLength = savedInstanceState.getInt(KEY_OTP_LENGTH);
@@ -117,7 +119,10 @@ public class TokenAdd extends Activity {
 				((Spinner)findViewById(R.id.tokenOtpSpinner)).setSelection(otpLength);
 				((Spinner)findViewById(R.id.tokenTimeStepSpinner)).setSelection(timeStep);
 			}
-		}
+		} else {
+            mSeedMask = getIntent().getByteArrayExtra(TokenList.KEY_PIN_SEED_MASK);
+        }
+		
 		
 		Button btnNext = (Button)findViewById(R.id.btnAddStep2);
 		btnNext.setOnClickListener(buttonNext);
@@ -166,6 +171,7 @@ public class TokenAdd extends Activity {
 		outState.putInt(KEY_ACTIVITY_STATE, mCurrentActivityStep);
 		outState.putString(KEY_NAME, mName);
 		outState.putString(KEY_SERIAL, mSerial);
+		outState.putByteArray(TokenList.KEY_PIN_SEED_MASK, mSeedMask);
 	}
 
 
@@ -425,11 +431,14 @@ public class TokenAdd extends Activity {
 					MessageDigest md = MessageDigest.getInstance("SHA1");
 					
 					md.reset();
-					byte[] h1 = md.digest(input);
+                    md.update(input);
+					byte[] h1 = md.digest();
 					md.reset();
-					byte[] h2 = md.digest(mergeByteArray(input, h1));
+                    md.update(input);
+                    md.update(h1);
+					byte[] h2 = md.digest();
 					
-					seed = HotpToken.byteArrayToHexString(h2);
+					seed = Hex.byteArrayToHex(h2);
 					
 				}catch(NoSuchAlgorithmException nsae){
 					
@@ -438,6 +447,8 @@ public class TokenAdd extends Activity {
 			}
 			
 			if(isValid){
+                seed = HotpToken.maskSeed(seed, mSeedMask);
+
 				//store token in db
 				TokenDbAdapter db = new TokenDbAdapter(v.getContext());
 				db.open();
@@ -451,25 +462,6 @@ public class TokenAdd extends Activity {
 			
 		}
 	};
-	
-	private byte[] mergeByteArray(byte[] b1, byte[] b2){
-		
-		byte[] result = new byte[b1.length + b2.length];
-		
-		int i = 0;
-		
-		for(byte b : b1){
-			result[i] = b;
-			i++;
-		}
-		
-		for(byte b : b2){
-			result[i] = b;
-			i++;	
-		}
-		
-		return result;		
-	}
 	
 	private OnClickListener radioSeed = new OnClickListener() {
 		

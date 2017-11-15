@@ -20,7 +20,7 @@
 package uk.co.bitethebullet.android.token.util;
 
 import java.io.IOException;
-import uk.co.bitethebullet.android.token.HotpToken;
+import uk.co.bitethebullet.android.token.util.Hex;
 
 public class SeedConvertor {
 	
@@ -32,7 +32,7 @@ public class SeedConvertor {
 		
 		if(currentFormat == 0){
 			//hex
-			return HotpToken.stringToHex(input);
+			return Hex.hexToByteArray(input);
 		}else if(currentFormat == 1){
 			//base 32
 			Base32 base32 = new Base32();
@@ -47,7 +47,7 @@ public class SeedConvertor {
 	public static String ConvertFromBA(byte[] input, int targetFormat){
 		if(targetFormat == 0){
 			//hex
-			return HotpToken.byteArrayToHexString(input);
+			return Hex.byteArrayToHex(input);
 		}else if(targetFormat == 1){
 			//base 32
 			Base32 base32 = new Base32();

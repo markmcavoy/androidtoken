@@ -29,6 +29,8 @@ import java.util.TimeZone;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
+import uk.co.bitethebullet.android.token.util.Hex;
+
 
 /**
  * Hotp Token
@@ -106,6 +108,16 @@ public class HotpToken implements IToken {
 	}
 
 
+    public static String maskSeed(String seed, byte[] mask) {
+        return Hex.xorHexWith(seed, mask);
+    }
+
+
+    public void maskSeed(byte[] mask) {
+        this.mSeed = maskSeed(this.mSeed, mask);
+    }
+
+
 	protected long getEventCount() {
 		return mEventCount;
 	}
@@ -136,7 +148,7 @@ public class HotpToken implements IToken {
 			movingFactor >>= 8;
 		}
 		
-		byte[] hash = hmacSha(stringToHex(mSeed), counter);
+		byte[] hash = hmacSha(Hex.hexToByteArray(mSeed), counter);
 		int offset = hash[hash.length - 1] & 0xf;
 		
 		int otpBinary = ((hash[offset] & 0x7f) << 24)
@@ -153,17 +165,6 @@ public class HotpToken implements IToken {
 		}
 		
 		return result;		
-	}
-
-	public static byte[] stringToHex(String hexInputString){
-		
-		byte[] bts = new byte[hexInputString.length() / 2];
-		
-		for (int i = 0; i < bts.length; i++) {
-			bts[i] = (byte) Integer.parseInt(hexInputString.substring(2*i, 2*i+2), 16);
-		}
-		
-		return bts;
 	}
 
 	private byte[] hmacSha(byte[] seed, byte[] counter) {
@@ -220,29 +221,11 @@ public class HotpToken implements IToken {
 			
 			//convert to hex string			
 			
-			return byteArrayToHexString(digest);
+			return Hex.byteArrayToHex(digest);
 			
 		}catch(NoSuchAlgorithmException ex){
 			return null;		
 		}
-	}
-
-
-	public static String byteArrayToHexString(byte[] digest) {
-		
-		StringBuffer buffer = new StringBuffer();
-		
-		for(int i =0; i < digest.length; i++){
-			String hex = Integer.toHexString(0xff & digest[i]);
-			
-			if(hex.length() == 1)
-				buffer.append("0");
-			
-			buffer.append(hex);
-
-		}
-		
-		return buffer.toString();
 	}
 
 }

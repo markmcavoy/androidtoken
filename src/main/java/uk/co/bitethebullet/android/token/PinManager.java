@@ -21,6 +21,9 @@ package uk.co.bitethebullet.android.token;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+
+import uk.co.bitethebullet.android.token.util.Hex;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -28,6 +31,19 @@ import android.database.Cursor;
 public class PinManager {
 
 	private static final String SALT = "EE08F4A6-8497-4330-8CD5-8A4ABD93CD46";
+	private static final String MASK = "GBKOISIIHVE7WBEI7O33KQY7CI";
+
+    private static byte[] hashWith(String salt, String pin) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA1");
+            md.reset();
+            md.update(salt.getBytes());
+            md.update(pin.getBytes());
+            return md.digest();
+		}catch(NoSuchAlgorithmException ex){
+			return null;
+		}
+    }
 	
 	public static Boolean hasPinDefined(Context c){
 		TokenDbAdapter db = new TokenDbAdapter(c);
@@ -35,67 +51,102 @@ public class PinManager {
 		
 		Cursor cursor = db.fetchPin();
 		
-		Boolean hasPin = cursor.getCount() > 0;
-		
-		cursor.close();
+        boolean hasPin = false;
+        if (cursor != null) {
+            hasPin = true;
+            cursor.close();
+        }
+
 		db.close();
 		
 		return hasPin;
 	}
 	
-	public static Boolean validatePin(Context c, String pin){
+	private static String createPinHash(String pin) {
+        return Hex.byteArrayToHex(hashWith(SALT, pin));
+	}
+
+    private static byte[] getSeedMask(String pin) {
+        if (pin == null)
+            return new byte[0];
+
+        // Rather than using the pin itself, we hash it (with a different salt) to get a better-distributed hex string
+        return hashWith(MASK, pin);
+    }
+
+	public static byte[] validatePinGetSeedMask(Context c, String pin){
+
+		boolean isValid;
+        boolean maskSeed = false;
 
 		TokenDbAdapter db = new TokenDbAdapter(c);
 		db.open();
-
-		Boolean isValid = false;
-		String userPin = createPinHash(pin);
 		Cursor cursor = db.fetchPin();
 		
-		if(cursor != null){
-			String dbPin = cursor.getString(cursor.getColumnIndexOrThrow(TokenDbAdapter.KEY_PIN_HASH));
-			isValid = dbPin.contentEquals(userPin);
+		if (cursor == null)
+            // if no pin hash we treat empty string as correct
+            isValid = pin == null || pin.isEmpty();
+        else {
+            int hashidx = cursor.getColumnIndexOrThrow(TokenDbAdapter.KEY_PIN_HASH);
+            // if null hash, accept any pin
+            if (cursor.isNull(hashidx))
+                isValid = true;
+            else {
+                String dbPin = cursor.getString(hashidx);
+                String userPin = createPinHash(pin);
+                isValid = dbPin.contentEquals(userPin);
+            }
+
+            maskSeed = cursor.getInt(cursor.getColumnIndexOrThrow(TokenDbAdapter.KEY_PIN_MASK_SEED)) > 0;
+            cursor.close();
 		}
 		
-		cursor.close();		
 		db.close();
 		
-		return isValid;
+        if (isValid)
+            return getSeedMask(maskSeed ? pin : null);
+        else
+            return null;
 	}
-	
-	public static void storePin(Context c, String pin){
-		TokenDbAdapter db =  new TokenDbAdapter(c);
-		db.open();		
-		db.createOrUpdatePin(createPinHash(pin));		
-		db.close();
-	}
-	
-	public static void removePin(Context c){
+
+	public static byte[] changePin(Context c, String old, String pin, boolean maskSeed, boolean validate){
+        byte[] oldmask = validatePinGetSeedMask(c, old);
+        if (oldmask == null)
+            return null;
+
+        byte[] mask = getSeedMask(maskSeed ? pin : null);
+        String hash = validate ? createPinHash(pin) : null;
+
 		TokenDbAdapter db = new TokenDbAdapter(c);
 		db.open();
-		
-		db.deletePin();
-		
+
+        if (pin == null)
+            db.deletePin();
+        else
+            db.createOrUpdatePin(hash, maskSeed);
+
+        if (!Arrays.equals(oldmask, mask)) {
+            /* need to update all seeds with the new mask */
+            Cursor cursor = db.fetchAllTokens();
+            int rowidx = cursor.getColumnIndexOrThrow(TokenDbAdapter.KEY_TOKEN_ROWID);
+            int seedidx = cursor.getColumnIndexOrThrow(TokenDbAdapter.KEY_TOKEN_SEED);
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                String seed = cursor.getString(seedidx);
+                seed = HotpToken.maskSeed(seed, oldmask);
+                seed = HotpToken.maskSeed(seed, mask);
+                db.updateToken(cursor.getLong(rowidx), seed);
+                cursor.moveToNext();
+            }
+            cursor.close();
+        }
+
 		db.close();
+
+        return mask;
 	}
-	
-	private static String createPinHash(String pin) {
-		
-		try{
-			
-			String toHash = SALT + pin;
-			
-			MessageDigest md = MessageDigest.getInstance("SHA1");
-			md.reset();
-			md.update(toHash.getBytes());
-			byte[] hashOutput = md.digest();
-			
-			return HotpToken.byteArrayToHexString(hashOutput);			
-			
-		}catch(NoSuchAlgorithmException ex){
-			return null;
-		}
-		
-	}
-	
+
+	public static boolean removePin(Context c, String old){
+        return changePin(c, old, null, false, false) != null;
+    }
 }

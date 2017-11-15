@@ -34,4 +34,6 @@ public interface IToken {
 	public void setId(long id);
 	
 	public int getTimeStep();
+
+	public void maskSeed(byte[] mask);
 }

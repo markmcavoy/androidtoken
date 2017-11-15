@@ -44,6 +44,7 @@ public class TokenDbAdapter {
 	
 	public static final String KEY_PIN_ROWID = "_id";
 	public static final String KEY_PIN_HASH = "pinhash";
+	public static final String KEY_PIN_MASK_SEED = "maskseed";
 	
 	//const define the different token type
 	public static final int TOKEN_TYPE_EVENT = 0;
@@ -55,7 +56,7 @@ public class TokenDbAdapter {
 	private static final String DATABASE_NAME = "androidtoken.db";
     private static final String DATABASE_TOKEN_TABLE = "token";
     private static final String DATABASE_PIN_TABLE = "pin";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     
     private DatabaseHelper mDbHelper;
     private SQLiteDatabase mDb;
@@ -74,8 +75,11 @@ public class TokenDbAdapter {
     
     private static final String DATABASE_CREATE_PIN =
                 "create table pin(_id integer primary key autoincrement,"
-                + " pinhash text);";
+                + " pinhash text,"
+                + " maskseed integer);";
     
+    private static final String DATABASE_UPGRADE_PIN_1 = "ALTER TABLE pin ADD COLUMN maskseed integer;";
+
     private static final String DATABASE_DROP_TOKEN = "DROP TABLE IF EXISTS token;";
     private static final String DATABASE_DROP_PIN = "DROP TABLE IF EXISTS pin;";
     			
@@ -95,15 +99,20 @@ public class TokenDbAdapter {
 
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-			
-			//TODO: MM ideally we should change this so upgrading doesnt lose
-			//the token data
-			
-			Log.w(TAG, "Upgrading database from version " + oldVersion + " to "
-                    + newVersion + ", which will destroy all old data");
-			db.execSQL(DATABASE_DROP_TOKEN);
-			db.execSQL(DATABASE_DROP_PIN);
-			onCreate(db);
+            switch (oldVersion) {
+                case 1:
+                    db.execSQL(DATABASE_UPGRADE_PIN_1);
+                    break;
+                default:
+                    //TODO: MM ideally we should change this so upgrading doesnt lose
+                    //the token data
+                    
+                    Log.w(TAG, "Upgrading database from version " + oldVersion + " to "
+                            + newVersion + ", which will destroy all old data");
+                    db.execSQL(DATABASE_DROP_TOKEN);
+                    db.execSQL(DATABASE_DROP_PIN);
+                    onCreate(db);
+            }
 		}    	
     }
     
@@ -154,6 +163,13 @@ public class TokenDbAdapter {
     	return mDb.update(DATABASE_TOKEN_TABLE, values, KEY_TOKEN_ROWID + "=" + tokenId, null) > 0;
     }
     
+    public boolean updateToken(long tokenId, String seed){
+    	ContentValues values = new 	ContentValues();
+    	values.put(KEY_TOKEN_SEED, seed);
+    	
+    	return mDb.update(DATABASE_TOKEN_TABLE, values, KEY_TOKEN_ROWID + "=" + tokenId, null) > 0;
+    }
+    
     public void incrementTokenCount(long tokenId){
     	mDb.execSQL("UPDATE token SET eventcount = eventcount + 1 WHERE _id = " + tokenId);
     }
@@ -193,24 +209,25 @@ public class TokenDbAdapter {
     
     
     //PIN TABLE
-    public boolean createOrUpdatePin(String pinHash){
+    public boolean createOrUpdatePin(String pinHash, boolean maskSeed){
     	
     	boolean result = false;
     	
     	ContentValues values = new 	ContentValues();
     	values.put(KEY_PIN_HASH, pinHash);
+    	values.put(KEY_PIN_MASK_SEED, maskSeed);
     	
     	Cursor c = fetchPin();
     	
-    	if(c.getCount() == 0){
+    	if(c == null){
     		//no pin set, insert new row
     		result = mDb.insert(DATABASE_PIN_TABLE, null, values) > 0;    		
     	}else{
     		//pin already set update existing
     		result = mDb.update(DATABASE_PIN_TABLE, values, null, null) > 0;
+            c.close();
     	}
     	
-    	c.close();
     	
     	return result;
     }
@@ -221,7 +238,7 @@ public class TokenDbAdapter {
     
     public Cursor fetchPin(){
     	Cursor c = mDb.query(DATABASE_PIN_TABLE,
-    					     new String[]{KEY_PIN_HASH}, 
+    					     new String[]{KEY_PIN_HASH, KEY_PIN_MASK_SEED}, 
     					     null, 
     					     null, 
     					     null, 
@@ -229,10 +246,11 @@ public class TokenDbAdapter {
     					     null,
     					     "1");
     	
-    	if(c != null)
-    		c.moveToFirst();
-    	
-    	return c;
+        if (c.moveToFirst())
+            return c;
+
+        c.close();
+        return null;
     }
     
 }

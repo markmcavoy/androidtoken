@@ -29,7 +29,7 @@ public class TokenFactory {
 	 * @param ctx
 	 * @return
 	 */
-	public static IToken CreateToken(Cursor c){
+	public static IToken CreateToken(Cursor c, byte[] seedMask){
 		
 		if(c == null){
 			return null;
@@ -53,7 +53,8 @@ public class TokenFactory {
 			return null;
 		}	
 		
-		token.setId(c.getLong(c.getColumnIndex(TokenDbAdapter.KEY_TOKEN_ROWID)));
+		token.setId(c.getLong(c.getColumnIndexOrThrow(TokenDbAdapter.KEY_TOKEN_ROWID)));
+        token.maskSeed(seedMask);
 		return token;
 	}
 	

@@ -23,10 +23,13 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 
 public class PinChange extends Activity {
@@ -41,31 +44,43 @@ public class PinChange extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.pinchange);
-		
-		if(!PinManager.hasPinDefined(this)){
-			hasExistingPin = false;
+
+        TokenDbAdapter db = new TokenDbAdapter(this);
+        db.open();
+
+        Cursor cursor = db.fetchPin();
+
+        if (cursor == null) {
 			EditText existPinEdit = (EditText)findViewById(R.id.pinChangeExistingPinEdit);
 			existPinEdit.setEnabled(false);
-		}
-		
+			hasExistingPin = false;
+        } else {
+            ((CheckBox)findViewById(R.id.pinChangeMaskSeed))
+                .setChecked(cursor.getInt(cursor.getColumnIndexOrThrow(TokenDbAdapter.KEY_PIN_MASK_SEED)) > 0);
+            ((CheckBox)findViewById(R.id.pinChangeNoValidate))
+                .setChecked(cursor.isNull(cursor.getColumnIndexOrThrow(TokenDbAdapter.KEY_PIN_HASH)));
+            cursor.close();
+        }
+
+        db.close();
+
+        setNoValidateClickable(null);
 		Button submitBtn = (Button)findViewById(R.id.pinChangeSubmit);
-		submitBtn.setOnClickListener(submitClick);		
+		submitBtn.setOnClickListener(submitClick);
 	}
-	
+
+    public void setNoValidateClickable(View v) {
+        ((CheckBox)findViewById(R.id.pinChangeNoValidate))
+            .setEnabled(((CheckBox)findViewById(R.id.pinChangeMaskSeed)).isChecked());
+    }
+
 	private OnClickListener submitClick = new 	OnClickListener() {
 		
 		public void onClick(View v) {
 			//validate the existing pin
+            String existingPin = null;
 			if(hasExistingPin){
-				
-				String existingPin = ((EditText)findViewById(R.id.pinChangeExistingPinEdit)).getText().toString();
-				
-				if(!PinManager.validatePin(v.getContext(), existingPin)){
-					//the pin entered is not the one stored, show
-					//warning and stop					
-					showDialog(DIALOG_INVALID_EXISTING_PIN);
-					return;
-				}
+				existingPin = ((EditText)findViewById(R.id.pinChangeExistingPinEdit)).getText().toString();
 			}
 			
 			//validate the two new pins match
@@ -81,9 +96,22 @@ public class PinChange extends Activity {
 				showDialog(DIALOG_DIFF_NEW_PIN);
 				return;
 			}
+
+            boolean maskSeed = ((CheckBox)findViewById(R.id.pinChangeMaskSeed)).isChecked();
+            boolean noValidate = maskSeed && ((CheckBox)findViewById(R.id.pinChangeNoValidate)).isChecked();
 			
 			//store
-			PinManager.storePin(v.getContext(), newPin1);
+            byte[] seedMask = PinManager.changePin(v.getContext(), existingPin, newPin1, maskSeed, !noValidate);
+            if (seedMask == null) {
+                //the pin entered is not the one stored, show
+                //warning and stop					
+                showDialog(DIALOG_INVALID_EXISTING_PIN);
+                return;
+            }
+
+            Intent res = new Intent();
+            res.putExtra(TokenList.KEY_PIN_SEED_MASK, seedMask);
+            setResult(Activity.RESULT_OK, res);
 			finish();
 		}
 	};
