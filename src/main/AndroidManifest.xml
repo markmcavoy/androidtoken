@@ -4,8 +4,6 @@
       android:versionCode="5"
       android:versionName="2.10" 
       android:installLocation="auto">
-
-    <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="16"/>
     
     <supports-screens
           android:largeScreens="true"
