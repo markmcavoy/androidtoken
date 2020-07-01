@@ -106,7 +106,7 @@ public class HotpToken implements IToken {
 	}
 
 
-	protected long getEventCount() {
+	public long getEventCount() {
 		return mEventCount;
 	}
 

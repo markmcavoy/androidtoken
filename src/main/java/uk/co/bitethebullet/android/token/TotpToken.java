@@ -54,12 +54,12 @@ public class TotpToken extends HotpToken {
 	public String generateOtp() {
 		
 		//calculate the moving counter using the time
-		return generateOtp(Calendar.getInstance(TimeZone.getTimeZone("GMT")));	
+		return generateOtp(Calendar.getInstance(TimeZone.getTimeZone("UTC")));
 	}
 	
 	public String generateOtp(Calendar currentTime){
-		long time =currentTime.getTimeInMillis()/1000;		
-		super.setEventCount(time/mTimeStep);
+		long time = currentTime.getTimeInMillis()/1000L;
+		super.setEventCount(time/new Long(mTimeStep));
 		
 		return super.generateOtp();
 	}
