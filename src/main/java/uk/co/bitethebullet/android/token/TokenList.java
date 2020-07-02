@@ -72,7 +72,8 @@ public class TokenList extends ListActivity {
 	private static final int ACTIVITY_ADD_TOKEN = 0;
 	private static final int ACTIVITY_CHANGE_PIN = 1;
 	private static final int ACTIVITY_REMOVE_PIN = 2;
-	
+
+	private static final int MENU_SETTINGS = Menu.FIRST + 5;
 	private static final int MENU_ADD_ID = Menu.FIRST;
 	private static final int MENU_PIN_CHANGE_ID = Menu.FIRST + 1;
 	private static final int MENU_PIN_REMOVE_ID = Menu.FIRST + 2;
@@ -489,7 +490,10 @@ public class TokenList extends ListActivity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		super.onCreateOptionsMenu(menu);		
+		super.onCreateOptionsMenu(menu);
+
+		menu.add(0, MENU_SETTINGS, 5, "Settings").setIcon(android.R.drawable.ic_menu_preferences);
+
 		menu.add(0, MENU_ADD_ID, 0, R.string.menu_add_token).setIcon(android.R.drawable.ic_menu_add);	
 		menu.add(0, MENU_PIN_CHANGE_ID, 1, R.string.menu_pin_change).setIcon(android.R.drawable.ic_lock_lock);
 		menu.add(0, MENU_PIN_REMOVE_ID, 2, R.string.menu_pin_remove).setIcon(android.R.drawable.ic_menu_delete);
@@ -522,6 +526,10 @@ public class TokenList extends ListActivity {
 		case MENU_SCAN_QR:
 			scanQR();
 			return true;
+
+		case MENU_SETTINGS:
+			showSettings();
+			return true;
 		}
 		
 		return super.onMenuItemSelected(featureId, item);
@@ -550,6 +558,11 @@ public class TokenList extends ListActivity {
 	private void createToken() {
 		Intent intent = new Intent(this, TokenAdd.class);
 		startActivityForResult(intent, ACTIVITY_ADD_TOKEN);		
+	}
+
+	private void showSettings(){
+		Intent intent = new Intent(this, SettingActivity.class);
+		startActivity(intent);
 	}
 
 	@Override
