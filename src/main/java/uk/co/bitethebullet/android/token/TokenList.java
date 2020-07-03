@@ -58,6 +58,9 @@ import android.widget.TextView;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 /**
  * Main entry point into Android Token application
  * 
@@ -67,7 +70,7 @@ import android.widget.Toast;
  * For more information about this project visit
  * http://code.google.com/p/androidtoken/
  */
-public class TokenList extends ListActivity {
+public class TokenList extends AppCompatActivity {
 	
 	private static final int ACTIVITY_ADD_TOKEN = 0;
 	private static final int ACTIVITY_CHANGE_PIN = 1;
@@ -132,6 +135,15 @@ public class TokenList extends ListActivity {
         	mMainPin.setVisibility(View.GONE);
         	mHasPassedPin = true;
         	fillData();
+
+			ListView lv = (ListView)findViewById(android.R.id.list);
+			TextView tvEmpty = (TextView)findViewById(android.R.id.empty);
+
+			if(lv.getCount() > 0){
+				tvEmpty.setVisibility(View.GONE);
+			}else{
+				tvEmpty.setVisibility(View.VISIBLE);
+			}
         }
         
         mHandler = new Handler();
@@ -349,7 +361,8 @@ public class TokenList extends ListActivity {
 		}
 		
 		//if we have no tokens disable the delete token option
-		menu.findItem(MENU_DELETE_TOKEN_ID).setEnabled(this.getListView().getCount() > 0);
+		ListView lv = (ListView)findViewById(android.R.id.list);
+		menu.findItem(MENU_DELETE_TOKEN_ID).setEnabled(lv.getCount() > 0);
 		
 		return mHasPassedPin;
 	}
@@ -358,13 +371,15 @@ public class TokenList extends ListActivity {
 		
 		if(mtokenAdaptor == null)
 			mtokenAdaptor = new TokenAdapter(this, mTokenDbHelper);
-		
-		setListAdapter(mtokenAdaptor);
+
+		ListView lv = (ListView)findViewById(android.R.id.list);
+		lv.setAdapter(mtokenAdaptor);
 	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		
+		super.onActivityResult(requestCode, resultCode, data);
+
 		Log.d("activityResult", "Activity Result received, request code:" + requestCode + " resultCode:" + resultCode);
 		int toastRId = 0;
 		
@@ -502,39 +517,36 @@ public class TokenList extends ListActivity {
 		return true;
 	}
 
-	
-
 	@Override
-	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+	public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
 		switch(item.getItemId()){
-		case MENU_ADD_ID:
-			createToken();
-			return true;
-			
-		case MENU_PIN_CHANGE_ID:
-			changePin();
-			return true;
-			
-		case MENU_PIN_REMOVE_ID:
-			removePin();
-			return true;
-			
-		case MENU_DELETE_TOKEN_ID:
-			showDialog(DIALOG_DELETE_TOKEN);
-			return true;
-			
-		case MENU_SCAN_QR:
-			scanQR();
-			return true;
+			case MENU_ADD_ID:
+				createToken();
+				return true;
 
-		case MENU_SETTINGS:
-			showSettings();
-			return true;
+			case MENU_PIN_CHANGE_ID:
+				changePin();
+				return true;
+
+			case MENU_PIN_REMOVE_ID:
+				removePin();
+				return true;
+
+			case MENU_DELETE_TOKEN_ID:
+				showDialog(DIALOG_DELETE_TOKEN);
+				return true;
+
+			case MENU_SCAN_QR:
+				scanQR();
+				return true;
+
+			case MENU_SETTINGS:
+				showSettings();
+				return true;
 		}
-		
-		return super.onMenuItemSelected(featureId, item);
+		return super.onOptionsItemSelected(item);
 	}
-
 
 	private void scanQR() {		
 		IntentIntegrator integrator = new IntentIntegrator(this);
@@ -565,13 +577,13 @@ public class TokenList extends ListActivity {
 		startActivity(intent);
 	}
 
-	@Override
-	protected void onListItemClick(ListView l, View v, int position, long id) {
-		super.onListItemClick(l, v, position, id);
-		
-		mSelectedTokenId = id;		
-		showDialog(DIALOG_OTP);	
-	}
+//	@Override
+//	protected void onListItemClick(ListView l, View v, int position, long id) {
+//		super.onListItemClick(l, v, position, id);
+//
+//		mSelectedTokenId = id;
+//		showDialog(DIALOG_OTP);
+//	}
 	
 	private DialogInterface.OnDismissListener dismissOtpDialog = new DialogInterface.OnDismissListener() {
 		

@@ -6,17 +6,11 @@
     android:layout_height="match_parent"
     tools:context=".SettingActivity">
 
-
-    <ScrollView
-        android:id="@+id/settingsContainer"
-        android:layout_width="409dp"
-        android:layout_height="729dp"
-        tools:layout_editor_absoluteX="1dp"
-        tools:layout_editor_absoluteY="1dp">
-
-        <LinearLayout
+        <FrameLayout
+            android:id="@+id/fragContainer"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
-    </ScrollView>
+            android:layout_height="match_parent">
+        </FrameLayout>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
