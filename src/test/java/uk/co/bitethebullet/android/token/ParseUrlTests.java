@@ -8,6 +8,7 @@ import uk.co.bitethebullet.android.token.ITokenMeta;
 import uk.co.bitethebullet.android.token.OtpAuthUriException;
 import uk.co.bitethebullet.android.token.TokenList;
 import uk.co.bitethebullet.android.token.TokenMetaData;
+import uk.co.bitethebullet.android.token.parse.UrlParser;
 import uk.co.bitethebullet.android.token.util.SeedConvertor;
 
 import java.io.IOException;
@@ -25,26 +26,12 @@ public class ParseUrlTests {
 	protected Context getContext(){
 		return c;
 	}
-	
-	protected void setContext(Context c){
-		this.c = c;
-	}
-
-	protected void setUp(){
-//		Context c = this.getInstrumentation().getTargetContext();
-		
-		//String s = c.getApplicationContext().getString(uk.co.bitethebullet.android.token.R.string.otpAuthMissingCounterParameter);
-//		displayFiles(c.getApplicationContext().getAssets(), "/");
-		
-		//setContext(this.getInstrumentation().getTargetContext());
-	}
-
 
 	@Test
 	public void testHotp1() throws OtpAuthUriException{
 		String url = "otpauth://hotp/alice@google.com?secret=JBSWY3DPEHPK3PXP&counter=10";
 		
-		ITokenMeta token = TokenList.parseOtpAuthUrl(getContext(), url);
+		ITokenMeta token = UrlParser.parseOtpAuthUrl(url);
 
 		Truth.assertThat(token.getName()).isEqualTo("alice@google.com");
 		Truth.assertThat(token.getSecretBase32()).isEqualTo("JBSWY3DPEHPK3PXP");
@@ -56,7 +43,7 @@ public class ParseUrlTests {
 	public void testHotpWithPadding() throws OtpAuthUriException{
 		String url = "otpauth://hotp/alice@google.com?secret=MFRGGZBRGIZTINJWG44A====&counter=10";
 		
-		ITokenMeta token = TokenList.parseOtpAuthUrl(getContext(), url);
+		ITokenMeta token = UrlParser.parseOtpAuthUrl(url);
 		
 		//the above base32 input should equate to 'abcd12345678'
 		byte[] seed = null;
@@ -79,7 +66,7 @@ public class ParseUrlTests {
 		String url = "http://www.bitethebullet.co.uk";
 		
 		try{
-			ITokenMeta token = TokenList.parseOtpAuthUrl(getContext(), url);
+			ITokenMeta token = UrlParser.parseOtpAuthUrl(url);
 			Assert.fail();
 		}catch(OtpAuthUriException e){
 			
@@ -90,7 +77,7 @@ public class ParseUrlTests {
 	public void testNotValidTokenType(){
 		String url = "otpauth://mark/alice@google.com?secret=JBSWY3DPEHPK3PXP";
 		try{
-			ITokenMeta token = TokenList.parseOtpAuthUrl(getContext(), url);
+			ITokenMeta token = UrlParser.parseOtpAuthUrl(url);
 			Assert.fail();
 		}catch(OtpAuthUriException e){
 			
@@ -102,7 +89,7 @@ public class ParseUrlTests {
 		String url = "otpauth://hotp/alice@google.com?secret=JBSWY3DPEHPK3PXP";
 		
 		try {
-			ITokenMeta token = TokenList.parseOtpAuthUrl(getContext(), url);
+			ITokenMeta token = UrlParser.parseOtpAuthUrl(url);
 			Assert.fail();
 		} catch (OtpAuthUriException e) {
 			//e.printStackTrace();
@@ -113,7 +100,7 @@ public class ParseUrlTests {
 	public void testTotp() throws OtpAuthUriException{
 		String url = "otpauth://totp/mark?secret=JBSWY3DPEHPK3PXP";
 		
-		ITokenMeta token = TokenList.parseOtpAuthUrl(getContext(), url);
+		ITokenMeta token = UrlParser.parseOtpAuthUrl(url);
 
 		Truth.assertThat(token.getName()).isEqualTo("mark");
 		Truth.assertThat(token.getSecretBase32()).isEqualTo("JBSWY3DPEHPK3PXP");
@@ -125,7 +112,7 @@ public class ParseUrlTests {
 	public void testTotpPeriod() throws OtpAuthUriException{
 		String url = "otpauth://totp/mark?secret=JBSWY3DPEHPK3PXP&period=60";
 		
-		ITokenMeta token = TokenList.parseOtpAuthUrl(getContext(), url);
+		ITokenMeta token = UrlParser.parseOtpAuthUrl(url);
 
 		Truth.assertThat(token.getName()).isEqualTo("mark");
 		Truth.assertThat(token.getSecretBase32()).isEqualTo("JBSWY3DPEHPK3PXP");
@@ -137,7 +124,7 @@ public class ParseUrlTests {
 	public void testTotpDigits() throws OtpAuthUriException{
 		String url = "otpauth://totp/mark?secret=JBSWY3DPEHPK3PXP&digits=8";
 		
-		ITokenMeta token = TokenList.parseOtpAuthUrl(getContext(), url);
+		ITokenMeta token = UrlParser.parseOtpAuthUrl(url);
 
 		Truth.assertThat(token.getName()).isEqualTo("mark");
 		Truth.assertThat(token.getSecretBase32()).isEqualTo("JBSWY3DPEHPK3PXP");
@@ -150,7 +137,7 @@ public class ParseUrlTests {
 	public void testTotpPaddingTokenName() throws OtpAuthUriException, IOException{
 		String url = "otpauth://totp/github.com/madeupuser?secret=mfrggzbrgiztinjwg44a====";
 		
-		ITokenMeta token = TokenList.parseOtpAuthUrl(getContext(), url);
+		ITokenMeta token = UrlParser.parseOtpAuthUrl(url);
 
 		Truth.assertThat(token.getName()).isEqualTo("github.com/madeupuser");
 		Truth.assertThat(new String(SeedConvertor.ConvertFromEncodingToBA(token.getSecretBase32(), SeedConvertor.BASE32_FORMAT)))
@@ -158,6 +145,34 @@ public class ParseUrlTests {
 		Truth.assertThat(token.getTimeStep()).isEqualTo(30);
 		Truth.assertThat(token.getDigits()).isEqualTo(6);
 		Truth.assertThat(token.getTokenType()).isEqualTo(TokenMetaData.TOTP_TOKEN);
+	}
+
+
+	@Test
+	public void testTotpOrganisationName1() throws OtpAuthUriException{
+		String url = "otpauth://totp/Example:alice@gmail.com?secret=mfrggzbrgiztinjwg44a====";
+		ITokenMeta token = UrlParser.parseOtpAuthUrl(url);
+
+		Truth.assertThat(token.getOrganisation()).isEqualTo("Example");
+		Truth.assertThat(token.getName()).isEqualTo(("alice@gmail.com"));
+	}
+
+	@Test
+	public void testTotpOrganisationName2() throws OtpAuthUriException{
+		String url = "otpauth://totp/Provider1:Alice%20Smith?secret=mfrggzbrgiztinjwg44a====";
+		ITokenMeta token = UrlParser.parseOtpAuthUrl(url);
+
+		Truth.assertThat(token.getOrganisation()).isEqualTo("Provider");
+		Truth.assertThat(token.getName()).isEqualTo(("Alice Smith"));
+	}
+
+	@Test
+	public void testTotpOrganisationName3() throws OtpAuthUriException{
+		String url = "otpauth://totp/Big%20Corporation%3A%20alice%40bigco.com?secret=mfrggzbrgiztinjwg44a====";
+		ITokenMeta token = UrlParser.parseOtpAuthUrl(url);
+
+		Truth.assertThat(token.getOrganisation()).isEqualTo("Big Corporation");
+		Truth.assertThat(token.getName()).isEqualTo(("alice@bigco.com"));
 	}
 	
 }

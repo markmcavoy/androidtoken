@@ -3,6 +3,8 @@ package uk.co.bitethebullet.android.token;
 public interface ITokenMeta {
 
 	public String getName();
+
+	public String getOrganisation();
 	
 	public int getTokenType();
 	
