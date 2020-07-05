@@ -27,6 +27,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import uk.co.bitethebullet.android.token.parse.UrlParser;
+import uk.co.bitethebullet.android.token.util.FontManager;
 import uk.co.bitethebullet.android.token.util.SeedConvertor;
 import uk.co.bitethebullet.android.token.zxing.IntentIntegrator;
 import uk.co.bitethebullet.android.token.zxing.IntentResult;
@@ -38,7 +39,9 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -61,6 +64,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import org.w3c.dom.Text;
 
 /**
  * Main entry point into Android Token application
@@ -605,11 +610,12 @@ public class TokenList extends AppCompatActivity {
 		private Context mContext;
 		private TokenDbAdapter mDbAdapter;
 		private List<IToken> mTokens;
+		private ColorStateList mDefaultTextView;
 		
 		public TokenAdapter(Context context, TokenDbAdapter dbAdapter){
 			mContext = context;
 			mDbAdapter = dbAdapter;
-			
+
 			Cursor cursor = mDbAdapter.fetchAllTokens();
 			startManagingCursor(cursor);
 			
@@ -641,12 +647,16 @@ public class TokenList extends AppCompatActivity {
 
 		public View getView(int position, View convertView, ViewGroup parent) {
 			LayoutInflater inflater = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			View row =  inflater.inflate(R.layout.token_list_row, null);		
+			View row =  inflater.inflate(R.layout.token_list_row, null);
 
 			TextView nameText = (TextView)row.findViewById(R.id.tokenrowtextname);
 			TextView serialText = (TextView)row.findViewById(R.id.tokenrowtextserial);
-			ImageView tokenImage = (ImageView)row.findViewById(R.id.ivTokenIcon);
 			TextView totpText = (TextView)row.findViewById(R.id.tokenRowTimeTokenOtp);
+
+			TextView faIcon = (TextView)row.findViewById(R.id.faIcon);
+			faIcon.setTypeface(FontManager.getTypeface(mContext, FontManager.FONTAWESOME));
+
+
 			ProgressBar totpProgressBar = (ProgressBar)row.findViewById(R.id.totpTimerProgressbar);
 			
 			
@@ -657,8 +667,6 @@ public class TokenList extends AppCompatActivity {
 			}else{
 				nameText.setText(currentToken.getName() + " (" + currentToken.getOrganisation() + ")");
 			}
-
-
 
 			if(currentToken.getSerialNumber().length() > 0)
 				serialText.setText(currentToken.getSerialNumber());
@@ -672,7 +680,7 @@ public class TokenList extends AppCompatActivity {
 			//value for the token. Event tokens will still need to
 			//be click to display the otp
 			if(currentToken.getTokenType() == TokenDbAdapter.TOKEN_TYPE_TIME){
-				tokenImage.setImageResource(R.drawable.xclock);
+				faIcon.setText(R.string.farClock);
 				totpText.setVisibility(View.VISIBLE);
 				totpText.setText(currentToken.generateOtp());
 				
@@ -693,10 +701,19 @@ public class TokenList extends AppCompatActivity {
 				}
 				
 				totpProgressBar.setProgress(progress);
+
+				//when we get to the last 5 seconds, lets change
+				//the token colour to red as a warning
+				if(progress > 10){
+					totpText.setTextColor(nameText.getTextColors());
+				}else{
+					totpText.setTextColor(Color.RED);
+				}
 			}
-			else
-				tokenImage.setImageResource(R.drawable.add);
-			
+			else {
+				faIcon.setText(R.string.farPlusSquare);
+			}
+
 			return row;
 		}
 	

@@ -89,7 +89,7 @@ public class TokenAdd extends Activity {
 		
 		setContentView(R.layout.token_add);
 		
-		loadSpinnerArrayData(R.id.tokenTypeSpinner, R.array.tokenType);
+		loadSpinnerArrayData(R.id.tokenTypeSpinner, R.array.tokenType, 1);
 		loadSpinnerArrayData(R.id.tokenOtpSpinner, R.array.otpLength);
 		loadSpinnerArrayData(R.id.tokenTimeStepSpinner, R.array.timeStep);
 		loadSpinnerArrayData(R.id.tokenSeedFormat, R.array.tokenSeedFormatType, 1);
