@@ -37,6 +37,7 @@ public class ParseUrlTests {
 		Truth.assertThat(token.getSecretBase32()).isEqualTo("JBSWY3DPEHPK3PXP");
 		Truth.assertThat(token.getCounter()).isEqualTo(10);
 		Truth.assertThat(token.getTokenType()).isEqualTo(TokenMetaData.HOTP_TOKEN);
+		Truth.assertThat(token.getOrganisation()).isNull();
 	}
 
 	@Test
@@ -58,6 +59,7 @@ public class ParseUrlTests {
 		Truth.assertThat(new String(seed)).isEqualTo("abcd12345678");
 		Truth.assertThat(token.getCounter()).isEqualTo(10);
 		Truth.assertThat(token.getTokenType()).isEqualTo(TokenMetaData.HOTP_TOKEN);
+		Truth.assertThat(token.getOrganisation()).isNull();
 	}
 
 
@@ -106,6 +108,7 @@ public class ParseUrlTests {
 		Truth.assertThat(token.getSecretBase32()).isEqualTo("JBSWY3DPEHPK3PXP");
 		Truth.assertThat(token.getTimeStep()).isEqualTo(30);
 		Truth.assertThat(token.getTokenType()).isEqualTo(TokenMetaData.TOTP_TOKEN);
+		Truth.assertThat(token.getOrganisation()).isNull();
 	}
 
 	@Test
@@ -118,6 +121,7 @@ public class ParseUrlTests {
 		Truth.assertThat(token.getSecretBase32()).isEqualTo("JBSWY3DPEHPK3PXP");
 		Truth.assertThat(token.getTimeStep()).isEqualTo(60);
 		Truth.assertThat(token.getTokenType()).isEqualTo(TokenMetaData.TOTP_TOKEN);
+		Truth.assertThat(token.getOrganisation()).isNull();
 	}
 
 	@Test
@@ -131,6 +135,7 @@ public class ParseUrlTests {
 		Truth.assertThat(token.getTimeStep()).isEqualTo(30);
 		Truth.assertThat(token.getDigits()).isEqualTo(8);
 		Truth.assertThat(token.getTokenType()).isEqualTo(TokenMetaData.TOTP_TOKEN);
+		Truth.assertThat(token.getOrganisation()).isNull();
 	}
 
 	@Test
@@ -145,6 +150,7 @@ public class ParseUrlTests {
 		Truth.assertThat(token.getTimeStep()).isEqualTo(30);
 		Truth.assertThat(token.getDigits()).isEqualTo(6);
 		Truth.assertThat(token.getTokenType()).isEqualTo(TokenMetaData.TOTP_TOKEN);
+		Truth.assertThat(token.getOrganisation()).isNull();
 	}
 
 
@@ -162,7 +168,7 @@ public class ParseUrlTests {
 		String url = "otpauth://totp/Provider1:Alice%20Smith?secret=mfrggzbrgiztinjwg44a====";
 		ITokenMeta token = UrlParser.parseOtpAuthUrl(url);
 
-		Truth.assertThat(token.getOrganisation()).isEqualTo("Provider");
+		Truth.assertThat(token.getOrganisation()).isEqualTo("Provider1");
 		Truth.assertThat(token.getName()).isEqualTo(("Alice Smith"));
 	}
 

@@ -8,6 +8,7 @@
     <string name="menu_delete_token">Delete Token</string>
     <string name="tokenType">Token Type</string>
     <string name="tokenName">Name</string>
+    <string name="tokenOrganisation">Organisation</string>
     <string name="tokenSerial">Serial No</string>
     <string name="tokenOtp">OTP Length</string>
     <string name="tokenTimeStep">Time Step</string>

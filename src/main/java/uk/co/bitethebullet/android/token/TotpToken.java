@@ -34,8 +34,9 @@ public class TotpToken extends HotpToken {
 
 	private int mTimeStep;
 	
-	public TotpToken(String name, String serial, String seed, int timeStep, int otpLength){
-		super(name, serial, seed, 0, otpLength);
+	public TotpToken(String name, String serial, String seed, int timeStep,
+					 	int otpLength, String organisation){
+		super(name, serial, seed, 0, otpLength, organisation);
 		
 		mTimeStep = timeStep;
 	}

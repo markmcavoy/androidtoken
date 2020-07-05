@@ -65,12 +65,14 @@ public class TokenAdd extends Activity {
 	private static final String KEY_NAME = "tokenName";
 	private static final String KEY_SERIAL = "tokenSerial";
 	private static final String KEY_SEED_FORMAT = "tokenSeedFormat";
+	private static final String KEY_ORGANISATION = "tokenOrganisation";
 	
 	//current state of the activity
 	private int mCurrentActivityStep = ACTIVITY_STEP_ONE;
 	
 	//holds the data from step 1
 	private String mName;
+	private String mOrganisation;
 	private String mSerial;
 	private int mTokenType;
 	private int mOtpLength;
@@ -99,7 +101,8 @@ public class TokenAdd extends Activity {
 			int otpLength = savedInstanceState.getInt(KEY_OTP_LENGTH);
 			int timeStep = savedInstanceState.getInt(KEY_TIME_STEP);
 			String tokenName = savedInstanceState.getString(KEY_NAME);
-			String tokenSerial = savedInstanceState.getString(KEY_SERIAL);			
+			String tokenSerial = savedInstanceState.getString(KEY_SERIAL);
+			String tokenOrganisation = savedInstanceState.getString(KEY_ORGANISATION);
 			
 			if(mCurrentActivityStep == ACTIVITY_STEP_TWO){
 				//step 2
@@ -107,7 +110,8 @@ public class TokenAdd extends Activity {
 				mSerial = tokenSerial;
 				mTokenType = tokenType;
 				mOtpLength = otpLength;
-				mTimeStep = timeStep;				
+				mTimeStep = timeStep;
+				mOrganisation = tokenOrganisation;
 				
 				showStepTwo();
 				
@@ -166,6 +170,7 @@ public class TokenAdd extends Activity {
 		outState.putInt(KEY_ACTIVITY_STATE, mCurrentActivityStep);
 		outState.putString(KEY_NAME, mName);
 		outState.putString(KEY_SERIAL, mSerial);
+		outState.putString(KEY_ORGANISATION, mOrganisation);
 	}
 
 
@@ -326,6 +331,7 @@ public class TokenAdd extends Activity {
 			boolean isValid = true;
 			
 			String name = ((EditText)findViewById(R.id.tokenNameEdit)).getText().toString();
+			String organisation = ((EditText)findViewById(R.id.tokenOrganisationEdit)).getText().toString();
 			String serial = ((EditText)findViewById(R.id.tokenSerialEdit)).getText().toString();
 			
 			if(name.length() == 0){
@@ -336,6 +342,7 @@ public class TokenAdd extends Activity {
 			if(isValid){
 				//store step 1 values in members vars
 				mName = name;
+				mOrganisation = organisation;
 				mSerial = serial;
 				mTokenType = ((Spinner)findViewById(R.id.tokenTypeSpinner)).getSelectedItemPosition();;
 				mOtpLength = Integer.parseInt(((Spinner)findViewById(R.id.tokenOtpSpinner)).getSelectedItem().toString());
@@ -441,7 +448,9 @@ public class TokenAdd extends Activity {
 				//store token in db
 				TokenDbAdapter db = new TokenDbAdapter(v.getContext());
 				db.open();
-				db.createToken(mName, mSerial, seed, mTokenType, mOtpLength, mTimeStep);
+				db.createToken(mName, mSerial, seed,
+								mTokenType, mOtpLength,
+								mTimeStep, mOrganisation);
 				db.close();
 				
 				setResult(RESULT_OK);

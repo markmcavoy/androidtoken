@@ -412,11 +412,20 @@ public class TokenList extends AppCompatActivity {
 			
 			ITokenMeta token = UrlParser.parseOtpAuthUrl(url);
 			
-			String hexSeed = SeedConvertor.ConvertFromBA(SeedConvertor.ConvertFromEncodingToBA(token.getSecretBase32(), SeedConvertor.BASE32_FORMAT), SeedConvertor.HEX_FORMAT);
+			String hexSeed = SeedConvertor.ConvertFromBA(
+								SeedConvertor.ConvertFromEncodingToBA(token.getSecretBase32(),
+																		SeedConvertor.BASE32_FORMAT),
+								SeedConvertor.HEX_FORMAT);
 			
 			TokenDbAdapter db = new TokenDbAdapter(this.getBaseContext());
 			db.open();
-			long tokenId = db.createToken(token.getName(), "", hexSeed, token.getTokenType(), token.getDigits(), token.getTimeStep());
+			long tokenId = db.createToken(token.getName(),
+											"",
+											hexSeed,
+											token.getTokenType(),
+											token.getDigits(),
+											token.getTimeStep(),
+											token.getOrganisation());
 			
 			//if we have created HOTP and counter is greater
 			//than zero we need to set the token to this in the db
@@ -633,7 +642,7 @@ public class TokenList extends AppCompatActivity {
 		public View getView(int position, View convertView, ViewGroup parent) {
 			LayoutInflater inflater = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			View row =  inflater.inflate(R.layout.token_list_row, null);		
-			
+
 			TextView nameText = (TextView)row.findViewById(R.id.tokenrowtextname);
 			TextView serialText = (TextView)row.findViewById(R.id.tokenrowtextserial);
 			ImageView tokenImage = (ImageView)row.findViewById(R.id.ivTokenIcon);
@@ -642,8 +651,15 @@ public class TokenList extends AppCompatActivity {
 			
 			
 			IToken currentToken = (IToken)getItem(position);
-			
-			nameText.setText(currentToken.getName());
+
+			if(currentToken.getOrganisation() == null){
+				nameText.setText(currentToken.getName());
+			}else{
+				nameText.setText(currentToken.getName() + " (" + currentToken.getOrganisation() + ")");
+			}
+
+
+
 			if(currentToken.getSerialNumber().length() > 0)
 				serialText.setText(currentToken.getSerialNumber());
 			else{

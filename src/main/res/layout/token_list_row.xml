@@ -22,9 +22,10 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/ivTokenIcon"
-        android:layout_alignParentTop="true"
+        android:layout_alignParentTop="false"
+        android:layout_below="@+id/tokenrowtextorganisation"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="4dp"
         android:textSize="15sp" >
     </TextView>
 
@@ -63,7 +64,8 @@
         android:layout_below="@+id/tokenrowtextserialcaption"
         android:layout_toRightOf="@+id/ivTokenIcon">
     </TextView>
-
+
+
     <ProgressBar
         android:id="@+id/totpTimerProgressbar"
         style="?android:attr/progressBarStyleHorizontal"

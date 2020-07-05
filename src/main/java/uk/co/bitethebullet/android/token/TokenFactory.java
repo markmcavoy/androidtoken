@@ -63,7 +63,8 @@ public class TokenFactory {
 								c.getString(c.getColumnIndexOrThrow(TokenDbAdapter.KEY_TOKEN_SERIAL)), 
 								c.getString(c.getColumnIndexOrThrow(TokenDbAdapter.KEY_TOKEN_SEED)), 
 								c.getLong(c.getColumnIndexOrThrow(TokenDbAdapter.KEY_TOKEN_COUNT)), 
-								c.getInt(c.getColumnIndexOrThrow(TokenDbAdapter.KEY_TOKEN_OTP_LENGTH)));
+								c.getInt(c.getColumnIndexOrThrow(TokenDbAdapter.KEY_TOKEN_OTP_LENGTH)),
+								c.getString(c.getColumnIndexOrThrow(TokenDbAdapter.KEY_TOKEN_ORGANISATION)));
 		
 		return token;
 	}
@@ -74,7 +75,8 @@ public class TokenFactory {
 										c.getString(c.getColumnIndexOrThrow(TokenDbAdapter.KEY_TOKEN_SERIAL)), 
 										c.getString(c.getColumnIndexOrThrow(TokenDbAdapter.KEY_TOKEN_SEED)), 
 										c.getInt(c.getColumnIndexOrThrow(TokenDbAdapter.KEY_TOKEN_TIME_STEP)), 
-										c.getInt(c.getColumnIndexOrThrow(TokenDbAdapter.KEY_TOKEN_OTP_LENGTH)));
+										c.getInt(c.getColumnIndexOrThrow(TokenDbAdapter.KEY_TOKEN_OTP_LENGTH)),
+										c.getString(c.getColumnIndexOrThrow(TokenDbAdapter.KEY_TOKEN_ORGANISATION)));
 		
 		return token;
 	}

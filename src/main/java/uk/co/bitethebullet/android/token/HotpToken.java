@@ -40,6 +40,7 @@ import javax.crypto.spec.SecretKeySpec;
 public class HotpToken implements IToken {
 
 	private String mName;
+	private String mOrganisation;
 	private String mSerial;
 	private String mSeed;
 	private long mEventCount;
@@ -52,12 +53,14 @@ public class HotpToken implements IToken {
     = {1,10,100,1000,10000,100000,1000000,10000000,100000000};
 
 	
-	public HotpToken(String name, String serial, String seed, long eventCount, int otpLength){
+	public HotpToken(String name, String serial, String seed,
+					 	long eventCount, int otpLength, String organisation){
 		mName = name;
 		mSerial = serial;
 		mSeed = seed;
 		mEventCount = eventCount;
 		mOtpLength = otpLength;
+		mOrganisation = organisation;
 	}
 	
 	public int getTimeStep(){
@@ -80,6 +83,7 @@ public class HotpToken implements IToken {
 		return mName;
 	}
 
+	public String getOrganisation(){ return mOrganisation; }
 
 	public void setName(String name) {
 		this.mName = name;

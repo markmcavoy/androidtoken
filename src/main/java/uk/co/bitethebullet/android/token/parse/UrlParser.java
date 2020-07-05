@@ -1,6 +1,9 @@
 package uk.co.bitethebullet.android.token.parse;
 
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+
 import uk.co.bitethebullet.android.token.ITokenMeta;
 import uk.co.bitethebullet.android.token.OtpAuthUriException;
 import uk.co.bitethebullet.android.token.TokenMetaData;
@@ -11,6 +14,7 @@ public class UrlParser {
 
         int tokenType;
         String tokenName;
+        String organisation = null;
         String secret = null;
         int digits = 6;
         int counter = 0;
@@ -37,6 +41,14 @@ public class UrlParser {
 
         tokenName = url.substring(url.indexOf("/", 10) + 1, url.indexOf("?", 10));
 
+        //decode url
+        tokenName = java.net.URLDecoder.decode(tokenName);
+
+        //check to see if we have an organisation prefix for the token name
+        if(tokenName.contains(":")){
+            organisation = tokenName.substring(0, tokenName.indexOf(":")).trim();
+            tokenName = tokenName.substring(tokenName.indexOf(":") + 1).trim();
+        }
         String[] parameters = url.substring(url.indexOf("?") + 1).split("&");
 
         for(int i = 0; i < parameters.length; i++){
@@ -69,6 +81,6 @@ public class UrlParser {
             throw new OtpAuthUriException();
         }
 
-        return new TokenMetaData(tokenName, tokenType, secret, digits, period, counter);
+        return new TokenMetaData(tokenName, tokenType, secret, digits, period, counter, organisation);
     }
 }

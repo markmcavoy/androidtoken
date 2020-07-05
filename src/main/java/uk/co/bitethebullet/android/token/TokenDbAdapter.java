@@ -41,6 +41,7 @@ public class TokenDbAdapter {
 	public static final String KEY_TOKEN_OTP_LENGTH = "otplength";
 	public static final String KEY_TOKEN_TIME_STEP = "timestep";
 	public static final String KEY_TOKEN_NAME_SORT = "namesort";
+	public static final String KEY_TOKEN_ORGANISATION = "organisation";
 	
 	public static final String KEY_PIN_ROWID = "_id";
 	public static final String KEY_PIN_HASH = "pinhash";
@@ -55,7 +56,7 @@ public class TokenDbAdapter {
 	private static final String DATABASE_NAME = "androidtoken.db";
     private static final String DATABASE_TOKEN_TABLE = "token";
     private static final String DATABASE_PIN_TABLE = "pin";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     
     private DatabaseHelper mDbHelper;
     private SQLiteDatabase mDb;
@@ -70,7 +71,8 @@ public class TokenDbAdapter {
                 + " tokentype integer,"
                 + " otplength integer,"
                 + " timestep integer,"
-                + " namesort text);";
+                + " namesort text,"
+				+ " organisation text);";
     
     private static final String DATABASE_CREATE_PIN =
                 "create table pin(_id integer primary key autoincrement,"
@@ -78,7 +80,9 @@ public class TokenDbAdapter {
     
     private static final String DATABASE_DROP_TOKEN = "DROP TABLE IF EXISTS token;";
     private static final String DATABASE_DROP_PIN = "DROP TABLE IF EXISTS pin;";
-    			
+
+	private static final String DATABASE_ALTER_TOKEN_1 = "ALTER TABLE "
+			+ DATABASE_TOKEN_TABLE + " ADD COLUMN " + KEY_TOKEN_ORGANISATION + " string;";
 	
     
     private static class DatabaseHelper extends SQLiteOpenHelper{
@@ -95,15 +99,10 @@ public class TokenDbAdapter {
 
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-			
-			//TODO: MM ideally we should change this so upgrading doesnt lose
-			//the token data
-			
-			Log.w(TAG, "Upgrading database from version " + oldVersion + " to "
-                    + newVersion + ", which will destroy all old data");
-			db.execSQL(DATABASE_DROP_TOKEN);
-			db.execSQL(DATABASE_DROP_PIN);
-			onCreate(db);
+
+			if (oldVersion < 2) {
+				db.execSQL(DATABASE_ALTER_TOKEN_1);
+			}
 		}    	
     }
     
@@ -129,7 +128,9 @@ public class TokenDbAdapter {
     
     
     //TOKEN TABLE
-    public long createToken(String name, String serial, String seed, int tokenType, int otpLength, int timeStep){
+    public long createToken(String name, String serial, String seed,
+							int tokenType, int otpLength, int timeStep,
+							String organisation){
     	ContentValues values = new ContentValues();
     	values.put(KEY_TOKEN_NAME, name);
     	values.put(KEY_TOKEN_SERIAL, serial);
@@ -139,6 +140,7 @@ public class TokenDbAdapter {
     	values.put(KEY_TOKEN_TIME_STEP, timeStep);
     	values.put(KEY_TOKEN_COUNT, 0);
     	values.put(KEY_TOKEN_NAME_SORT, name.toLowerCase());
+    	values.put(KEY_TOKEN_ORGANISATION, organisation);
     	
     	return mDb.insert(DATABASE_TOKEN_TABLE, null, values);
     }
@@ -166,7 +168,7 @@ public class TokenDbAdapter {
     	Cursor c = mDb.query(DATABASE_TOKEN_TABLE,
     						 new String[] {KEY_TOKEN_ROWID, KEY_TOKEN_NAME, KEY_TOKEN_SERIAL, KEY_TOKEN_SEED, 
     										KEY_TOKEN_COUNT, KEY_TOKEN_TYPE, KEY_TOKEN_OTP_LENGTH, 
-    										KEY_TOKEN_TIME_STEP}, 
+    										KEY_TOKEN_TIME_STEP, KEY_TOKEN_ORGANISATION},
     						 KEY_TOKEN_ROWID + "=" + tokenId, 
     						 null,
     						 null, 
@@ -183,7 +185,7 @@ public class TokenDbAdapter {
     	return mDb.query(DATABASE_TOKEN_TABLE, 
 		    			new String[] {KEY_TOKEN_ROWID, KEY_TOKEN_NAME, KEY_TOKEN_SERIAL, KEY_TOKEN_SEED, 
 										KEY_TOKEN_COUNT, KEY_TOKEN_TYPE, KEY_TOKEN_OTP_LENGTH, 
-										KEY_TOKEN_TIME_STEP}, 
+										KEY_TOKEN_TIME_STEP, KEY_TOKEN_ORGANISATION},
     				     null, 
     				     null, 
     				     null, 
