@@ -25,6 +25,9 @@ import java.security.NoSuchAlgorithmException;
 import android.content.Context;
 import android.database.Cursor;
 
+import uk.co.bitethebullet.android.token.datalayer.TokenDbAdapter;
+import uk.co.bitethebullet.android.token.tokens.HotpToken;
+
 public class PinManager {
 
 	private static final String SALT = "EE08F4A6-8497-4330-8CD5-8A4ABD93CD46";
@@ -90,7 +93,7 @@ public class PinManager {
 			md.update(toHash.getBytes());
 			byte[] hashOutput = md.digest();
 			
-			return HotpToken.byteArrayToHexString(hashOutput);			
+			return HotpToken.byteArrayToHexString(hashOutput);
 			
 		}catch(NoSuchAlgorithmException ex){
 			return null;

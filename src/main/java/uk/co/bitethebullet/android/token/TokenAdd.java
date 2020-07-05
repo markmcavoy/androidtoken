@@ -42,6 +42,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemSelectedListener;
 
+import uk.co.bitethebullet.android.token.datalayer.TokenDbAdapter;
+import uk.co.bitethebullet.android.token.tokens.HotpToken;
 import uk.co.bitethebullet.android.token.util.*;
 
 public class TokenAdd extends Activity {

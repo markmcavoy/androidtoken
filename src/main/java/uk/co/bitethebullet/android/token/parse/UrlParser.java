@@ -1,12 +1,8 @@
 package uk.co.bitethebullet.android.token.parse;
 
 
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
-
-import uk.co.bitethebullet.android.token.ITokenMeta;
-import uk.co.bitethebullet.android.token.OtpAuthUriException;
-import uk.co.bitethebullet.android.token.TokenMetaData;
+import uk.co.bitethebullet.android.token.tokens.ITokenMeta;
+import uk.co.bitethebullet.android.token.tokens.TokenMetaData;
 
 public class UrlParser {
 

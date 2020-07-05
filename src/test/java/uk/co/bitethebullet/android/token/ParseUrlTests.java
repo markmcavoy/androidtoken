@@ -4,15 +4,13 @@ import org.junit.Assert;
 import org.junit.Test;
 import com.google.common.truth.Truth;
 
-import uk.co.bitethebullet.android.token.ITokenMeta;
-import uk.co.bitethebullet.android.token.OtpAuthUriException;
-import uk.co.bitethebullet.android.token.TokenList;
-import uk.co.bitethebullet.android.token.TokenMetaData;
+import uk.co.bitethebullet.android.token.parse.OtpAuthUriException;
 import uk.co.bitethebullet.android.token.parse.UrlParser;
+import uk.co.bitethebullet.android.token.tokens.ITokenMeta;
+import uk.co.bitethebullet.android.token.tokens.TokenMetaData;
 import uk.co.bitethebullet.android.token.util.SeedConvertor;
 
 import java.io.IOException;
-import java.io.UTFDataFormatException;
 
 import android.content.Context;
 

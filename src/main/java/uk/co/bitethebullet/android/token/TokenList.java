@@ -26,7 +26,15 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import uk.co.bitethebullet.android.token.datalayer.TokenDbAdapter;
+import uk.co.bitethebullet.android.token.parse.OtpAuthUriException;
 import uk.co.bitethebullet.android.token.parse.UrlParser;
+import uk.co.bitethebullet.android.token.tokens.HotpToken;
+import uk.co.bitethebullet.android.token.tokens.IToken;
+import uk.co.bitethebullet.android.token.tokens.ITokenMeta;
+import uk.co.bitethebullet.android.token.tokens.TokenFactory;
+import uk.co.bitethebullet.android.token.tokens.TokenHelper;
+import uk.co.bitethebullet.android.token.tokens.TokenMetaData;
 import uk.co.bitethebullet.android.token.util.FontManager;
 import uk.co.bitethebullet.android.token.util.SeedConvertor;
 import uk.co.bitethebullet.android.token.zxing.IntentIntegrator;
@@ -35,7 +43,6 @@ import uk.co.bitethebullet.android.token.zxing.IntentResult;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -64,8 +71,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
-import org.w3c.dom.Text;
 
 /**
  * Main entry point into Android Token application
@@ -563,15 +568,16 @@ public class TokenList extends AppCompatActivity {
 		Dialog d;
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		
-		Cursor c = mTokenDbHelper.fetchAllTokens();
-		startManagingCursor(c);
-					
+		CharSequence[] tokenNames = new TokenHelper(mTokenDbHelper)
+											.getTokenFullNames();
+
 		builder.setTitle(R.string.app_name)
-			   .setSingleChoiceItems(c, -1, TokenDbAdapter.KEY_TOKEN_NAME, deleteTokenEvent)
+			   .setSingleChoiceItems(tokenNames, -1, deleteTokenEvent)
 			   .setPositiveButton(R.string.dialogPositive, deleteTokenPositiveEvent)
 			   .setNegativeButton(R.string.dialogNegative, deleteTokenNegativeEvent);
 		
 		d = builder.create();
+
 		return d;
 	}
 	
@@ -581,7 +587,9 @@ public class TokenList extends AppCompatActivity {
 			
 			if(mTokenToDeleteId > 0){
 				mTokenDbHelper.deleteToken(mTokenToDeleteId);
-				mTokenToDeleteId = Long.parseLong("-1");
+
+				//reset
+				mTokenToDeleteId = -1L;
 				mtokenAdaptor = null;
 				fillData();
 				removeDialog(DIALOG_DELETE_TOKEN);
@@ -600,11 +608,12 @@ public class TokenList extends AppCompatActivity {
 	private DialogInterface.OnClickListener deleteTokenEvent = new DialogInterface.OnClickListener() {
 		
 		public void onClick(DialogInterface dialog, int which) {
-			Cursor c = mTokenDbHelper.fetchAllTokens();
-			startManagingCursor(c);
-			
-			c.moveToPosition(which);
-			mTokenToDeleteId = c.getLong(c.getColumnIndexOrThrow(TokenDbAdapter.KEY_TOKEN_ROWID));			
+
+			ArrayList<IToken> tokens = new TokenHelper(mTokenDbHelper)
+												.getTokens();
+
+			IToken selectedToken = tokens.get(which);
+			mTokenToDeleteId = selectedToken.getId();
 		}
 	};
 	

@@ -23,7 +23,7 @@ import java.util.Calendar;
 import java.util.TimeZone;
 
 import org.junit.Test;
-import uk.co.bitethebullet.android.token.TotpToken;
+import uk.co.bitethebullet.android.token.tokens.TotpToken;
 import com.google.common.truth.Truth;
 
 

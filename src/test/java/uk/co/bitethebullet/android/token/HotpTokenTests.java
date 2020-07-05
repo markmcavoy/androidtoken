@@ -23,6 +23,8 @@ package uk.co.bitethebullet.android.token;
 import org.junit.Test;
 import com.google.common.truth.Truth;
 
+import uk.co.bitethebullet.android.token.tokens.HotpToken;
+
 public class HotpTokenTests {
 
 	private final static String SEED = "3132333435363738393031323334353637383930";
