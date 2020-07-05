@@ -374,12 +374,15 @@ public class TokenList extends AppCompatActivity {
 	}
 
 	private void fillData() {
-		
-		if(mtokenAdaptor == null)
-			mtokenAdaptor = new TokenAdapter(this, mTokenDbHelper);
-
 		ListView lv = (ListView)findViewById(android.R.id.list);
-		lv.setAdapter(mtokenAdaptor);
+
+		if(mtokenAdaptor == null){
+			mtokenAdaptor = new TokenAdapter(this, mTokenDbHelper);
+			lv.setAdapter(mtokenAdaptor);
+		}else{
+			mtokenAdaptor.notifyDataSetChanged();
+		}
+
 	}
 
 	@Override
