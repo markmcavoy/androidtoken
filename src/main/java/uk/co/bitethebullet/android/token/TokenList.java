@@ -43,6 +43,8 @@ import uk.co.bitethebullet.android.token.zxing.IntentResult;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -52,8 +54,10 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -158,16 +162,9 @@ public class TokenList extends AppCompatActivity {
         }
         
         mHandler = new Handler();
-        
                 
         ListView lv = (ListView)findViewById(android.R.id.list);
-        lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-
-			public boolean onItemLongClick(AdapterView<?> arg0, View v,
-					int pos, long id) {
-				return onLongListItemClick(v,pos,id);
-			}
-		});
+		registerForContextMenu(lv);
     }
     
 
@@ -233,36 +230,36 @@ public class TokenList extends AppCompatActivity {
 	};
 	
 	
-	protected boolean onLongListItemClick(View v, int pos, final long id) {
-	    Log.i("", "onLongListItemClick id=" + id);
-	    
-	    //prompt the user to see if they want to delete the current
-	    //selected token
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		
-		Cursor c = mTokenDbHelper.fetchAllTokens();
-		startManagingCursor(c);
-					
-		builder.setTitle(R.string.app_name)
-			   .setMessage(R.string.confirmDelete)
-			   .setIcon(android.R.drawable.ic_dialog_alert)
-			   .setPositiveButton(R.string.dialogPositive, new DialogInterface.OnClickListener() {				
-					public void onClick(DialogInterface dialog, int which) {						
-						mTokenDbHelper.deleteToken(id);
-						
-						Toast.makeText(getApplicationContext(), R.string.toastDeleted, Toast.LENGTH_SHORT).show();
-						
-						mtokenAdaptor = null;
-						fillData();
-					}
-			   })
-			   .setNegativeButton(R.string.dialogNegative, null);
-		
-		builder.show();
-	    
-	    
-	    return true;
-	}
+//	protected boolean onLongListItemClick(View v, int pos, final long id) {
+//	    Log.i("", "onLongListItemClick id=" + id);
+//
+//	    //prompt the user to see if they want to delete the current
+//	    //selected token
+//		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//
+//		Cursor c = mTokenDbHelper.fetchAllTokens();
+//		startManagingCursor(c);
+//
+//		builder.setTitle(R.string.app_name)
+//			   .setMessage(R.string.confirmDelete)
+//			   .setIcon(android.R.drawable.ic_dialog_alert)
+//			   .setPositiveButton(R.string.dialogPositive, new DialogInterface.OnClickListener() {
+//					public void onClick(DialogInterface dialog, int which) {
+//						mTokenDbHelper.deleteToken(id);
+//
+//						Toast.makeText(getApplicationContext(), R.string.toastDeleted, Toast.LENGTH_SHORT).show();
+//
+//						mtokenAdaptor = null;
+//						fillData();
+//					}
+//			   })
+//			   .setNegativeButton(R.string.dialogNegative, null);
+//
+//		builder.show();
+//
+//
+//	    return true;
+//	}
 	
 	private Dialog createAlertDialog(int messageId){
 		
@@ -366,15 +363,15 @@ public class TokenList extends AppCompatActivity {
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		
+
 		if(mHasPassedPin){
 			menu.findItem(MENU_PIN_REMOVE_ID).setEnabled(PinManager.hasPinDefined(this));
 		}
-		
+
 		//if we have no tokens disable the delete token option
 		ListView lv = (ListView)findViewById(android.R.id.list);
 		menu.findItem(MENU_DELETE_TOKEN_ID).setEnabled(lv.getCount() > 0);
-		
+
 		return mHasPassedPin;
 	}
 
@@ -533,7 +530,62 @@ public class TokenList extends AppCompatActivity {
 		startActivity(intent);
 	}
 
-//	@Override
+
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.token_item_menu, menu);
+
+		Log.d(null, "onCreateContextMenu: ");
+	}
+
+	private IToken tokenAtPos(int position) {
+		ListView lv = (ListView)findViewById(android.R.id.list);
+
+		IToken token = (IToken) lv.getAdapter().getItem(position);
+		return token;
+	}
+
+	@Override
+	public boolean onContextItemSelected(@NonNull MenuItem item) {
+		AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+		IToken token = tokenAtPos(info.position);
+
+		boolean tokenClicked = token != null;
+
+		if (tokenClicked) {
+
+			switch (item.getItemId()) {
+				case R.id.token_change_icon:
+					//editNote(info.id);
+					Toast.makeText(this,"change icon",Toast.LENGTH_SHORT).show();
+					return true;
+				case R.id.token_delete:
+					Toast.makeText(this,"delete token",Toast.LENGTH_SHORT).show();
+					return true;
+				case R.id.token_code_secret:
+					Toast.makeText(this,"copy seed",Toast.LENGTH_SHORT).show();
+					return true;
+				default:
+					return super.onContextItemSelected(item);
+			}
+		} else {
+			return super.onContextItemSelected(item);
+		}
+	}
+
+	private void copyTokenSeedToClipboard(IToken token) {
+		ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+		clipboard.setPrimaryClip(ClipData.newPlainText( "Seed for " + token.getName(), token.getSeed()));
+
+		Toast toast = Toast.makeText(this,
+										getString(R.string.copy_token_seed_to_clipboard_ok, token.getName(),token.getSeed() ),
+										Toast.LENGTH_SHORT);
+		toast.show();
+	}
+
+	//	@Override
 //	protected void onListItemClick(ListView l, View v, int position, long id) {
 //		super.onListItemClick(l, v, position, id);
 //
@@ -592,7 +644,7 @@ public class TokenList extends AppCompatActivity {
 				mTokenToDeleteId = -1L;
 				mtokenAdaptor = null;
 				fillData();
-				removeDialog(DIALOG_DELETE_TOKEN);
+				dialog.dismiss();
 			}
 			
 		}
@@ -601,7 +653,7 @@ public class TokenList extends AppCompatActivity {
 	private DialogInterface.OnClickListener deleteTokenNegativeEvent = new DialogInterface.OnClickListener() {
 		
 		public void onClick(DialogInterface dialog, int which) {
-			removeDialog(DIALOG_DELETE_TOKEN);			
+			dialog.dismiss();
 		}
 	};
 	

@@ -36,4 +36,6 @@ public interface IToken {
 	public int getTimeStep();
 
 	public String getOrganisation();
+
+	public String getSeed();
 }

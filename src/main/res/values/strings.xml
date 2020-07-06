@@ -74,4 +74,10 @@
     <string name="fasHourGlassStart">&#xf251;</string>
     <string name="farClock">&#xf017;</string>
     <string name="farPlusSquare">&#xf0fe;</string>
+    <string name="token_change_icon">Change Icon</string>
+    <string name="token_delete">Delete Token</string>
+    <string name="token_code_secret">Copy Seed to Clipboard</string>
+    <string name="copy_token_seed_to_clipboard_ok">Token seed copied</string>
+
+
 </resources>

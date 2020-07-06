@@ -102,7 +102,7 @@ public class HotpToken implements IToken {
 	}
 
 
-	protected String getSeed() {
+	public String getSeed() {
 		return mSeed;
 	}
 
