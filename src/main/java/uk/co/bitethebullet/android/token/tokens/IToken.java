@@ -38,4 +38,6 @@ public interface IToken {
 	public String getOrganisation();
 
 	public String getSeed();
+
+	public String getFullName();
 }

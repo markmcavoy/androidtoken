@@ -34,16 +34,16 @@ public class TokenHelper {
 
         CharSequence[] charSequences = new CharSequence[tokens.size()];
         for(int i = 0; i < tokens.size(); i++){
-            StringBuilder sb = new StringBuilder();
+//            StringBuilder sb = new StringBuilder();
+//
+//            if(tokens.get(i).getOrganisation() != null){
+//                sb.append(tokens.get(i).getOrganisation());
+//                sb.append("/");
+//            }
+//
+//            sb.append(tokens.get(i).getName());
 
-            if(tokens.get(i).getOrganisation() != null){
-                sb.append(tokens.get(i).getOrganisation());
-                sb.append("/");
-            }
-
-            sb.append(tokens.get(i).getName());
-
-            charSequences[i] = sb.toString();
+            charSequences[i] = tokens.get(i).getFullName();
         }
 
         return charSequences;

@@ -66,6 +66,7 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -75,6 +76,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
 /**
  * Main entry point into Android Token application
@@ -114,7 +118,7 @@ public class TokenList extends AppCompatActivity {
 	private Runnable mOtpUpdateTask;
 	
 	private LinearLayout mMainPin;
-	private LinearLayout mMainList;
+	private FrameLayout mMainList;
 	
 	private TokenAdapter mtokenAdaptor = null;
 	
@@ -136,7 +140,7 @@ public class TokenList extends AppCompatActivity {
         //if we have a pin defined, need to enter that first before allow
         //the user to see the tokens        
         mMainPin = (LinearLayout)findViewById(R.id.mainPin);
-        mMainList = (LinearLayout)findViewById(R.id.mainList);
+        mMainList = (FrameLayout)findViewById(R.id.list);
         
         Button loginBtn = (Button)findViewById(R.id.mainLogin);
         
@@ -151,8 +155,8 @@ public class TokenList extends AppCompatActivity {
         	mHasPassedPin = true;
         	fillData();
 
-			ListView lv = (ListView)findViewById(android.R.id.list);
-			TextView tvEmpty = (TextView)findViewById(android.R.id.empty);
+			ListView lv = (ListView)findViewById(R.id.listTokens);
+			TextView tvEmpty = (TextView)findViewById(R.id.empty);
 
 			if(lv.getCount() > 0){
 				tvEmpty.setVisibility(View.GONE);
@@ -163,8 +167,18 @@ public class TokenList extends AppCompatActivity {
         
         mHandler = new Handler();
                 
-        ListView lv = (ListView)findViewById(android.R.id.list);
+        ListView lv = (ListView)findViewById(R.id.listTokens);
 		registerForContextMenu(lv);
+
+		FloatingActionButton fab = findViewById(R.id.fab);
+		fab.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				scanQR();
+//				Snackbar.make(view, "Here's a Snackbar", Snackbar.LENGTH_LONG)
+//						.setAction("Action", null).show();
+			}
+		});
     }
     
 
@@ -369,14 +383,14 @@ public class TokenList extends AppCompatActivity {
 		}
 
 		//if we have no tokens disable the delete token option
-		ListView lv = (ListView)findViewById(android.R.id.list);
+		ListView lv = findViewById(R.id.listTokens);
 		menu.findItem(MENU_DELETE_TOKEN_ID).setEnabled(lv.getCount() > 0);
 
 		return mHasPassedPin;
 	}
 
 	private void fillData() {
-		ListView lv = (ListView)findViewById(android.R.id.list);
+		ListView lv = (ListView)findViewById(R.id.listTokens);
 
 		if(mtokenAdaptor == null){
 			mtokenAdaptor = new TokenAdapter(this, mTokenDbHelper);
@@ -558,7 +572,6 @@ public class TokenList extends AppCompatActivity {
 
 			switch (item.getItemId()) {
 				case R.id.token_change_icon:
-					//editNote(info.id);
 					Toast.makeText(this,"change icon",Toast.LENGTH_SHORT).show();
 					return true;
 				case R.id.token_delete:
@@ -577,7 +590,7 @@ public class TokenList extends AppCompatActivity {
 
 	private void copyTokenSeedToClipboard(IToken token) {
 		ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-		clipboard.setPrimaryClip(ClipData.newPlainText( "Seed for " + token.getName(), token.getSeed()));
+		clipboard.setPrimaryClip(ClipData.newPlainText( "Seed for " + token.getFullName(), token.getSeed()));
 
 		Toast toast = Toast.makeText(this,
 										getString(R.string.copy_token_seed_to_clipboard_ok, token.getName(),token.getSeed() ),

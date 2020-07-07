@@ -6,27 +6,44 @@
     android:layout_height="fill_parent"
     android:visibility="visible">
 
+	<FrameLayout
+		android:id="@+id/list"
+		android:orientation="vertical"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:visibility="gone">
 
-    <LinearLayout
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:id="@+id/mainList"
-    android:visibility="gone">    
-	    <ListView android:id="@+id/android:list"  
-	    			android:layout_width="fill_parent" 
-	    			android:layout_height="wrap_content">
-	    </ListView>
-	    
-		<TextView  
-			android:id="@+id/android:empty"
-		    android:layout_width="fill_parent" 
-		    android:layout_height="wrap_content" 
-		    android:text="@string/noTokens"
-			android:gravity="center"
-			android:layout_marginTop="30dp"
-		    />
-	</LinearLayout>
+		<LinearLayout
+		android:orientation="vertical"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/mainList"
+		android:visibility="visible">
+
+
+			<ListView android:id="@+id/listTokens"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content" />
+
+			<TextView
+				android:id="@+id/empty"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:text="@string/noTokens"
+				android:gravity="center"
+				android:layout_marginTop="30dp"
+				/>
+
+		</LinearLayout>
+		<com.google.android.material.floatingactionbutton.FloatingActionButton
+			android:id="@+id/fab"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="end|bottom"
+			android:src="@drawable/baseline_add_black_24dp"
+			android:contentDescription="@string/qr_fab"
+			android:layout_margin="16dp" />
+	</FrameLayout>
 
 	<LinearLayout
 		android:id="@+id/mainPin"

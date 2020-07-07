@@ -78,6 +78,8 @@
     <string name="token_delete">Delete Token</string>
     <string name="token_code_secret">Copy Seed to Clipboard</string>
     <string name="copy_token_seed_to_clipboard_ok">Token seed copied</string>
+    <string name="qr_fab">Scan QR</string>
+
 
 
 </resources>

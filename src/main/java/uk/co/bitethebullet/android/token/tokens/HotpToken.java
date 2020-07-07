@@ -131,6 +131,19 @@ public class HotpToken implements IToken {
 		this.mOtpLength = otpLength;
 	}
 
+	public String getFullName(){
+		StringBuilder sb = new StringBuilder();
+
+		if(this.getOrganisation() != null){
+			sb.append(this.getOrganisation());
+			sb.append("/");
+		}
+
+		sb.append(this.getName());
+
+		return sb.toString();
+	}
+
 
 	public String generateOtp() {
 		
