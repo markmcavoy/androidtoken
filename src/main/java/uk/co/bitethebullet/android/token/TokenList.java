@@ -26,14 +26,16 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import uk.co.bitethebullet.android.token.adapters.TokenAdapter;
 import uk.co.bitethebullet.android.token.datalayer.TokenDbAdapter;
+import uk.co.bitethebullet.android.token.dialogs.DeleteTokenDialog;
+import uk.co.bitethebullet.android.token.dialogs.DeleteTokenPickerDialog;
 import uk.co.bitethebullet.android.token.parse.OtpAuthUriException;
 import uk.co.bitethebullet.android.token.parse.UrlParser;
 import uk.co.bitethebullet.android.token.tokens.HotpToken;
 import uk.co.bitethebullet.android.token.tokens.IToken;
 import uk.co.bitethebullet.android.token.tokens.ITokenMeta;
 import uk.co.bitethebullet.android.token.tokens.TokenFactory;
-import uk.co.bitethebullet.android.token.tokens.TokenHelper;
 import uk.co.bitethebullet.android.token.tokens.TokenMetaData;
 import uk.co.bitethebullet.android.token.util.FontManager;
 import uk.co.bitethebullet.android.token.util.SeedConvertor;
@@ -41,7 +43,6 @@ import uk.co.bitethebullet.android.token.zxing.IntentIntegrator;
 import uk.co.bitethebullet.android.token.zxing.IntentResult;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -177,8 +178,6 @@ public class TokenList extends AppCompatActivity
 			@Override
 			public void onClick(View view) {
 				scanQR();
-//				Snackbar.make(view, "Here's a Snackbar", Snackbar.LENGTH_LONG)
-//						.setAction("Action", null).show();
 			}
 		});
     }
@@ -200,7 +199,6 @@ public class TokenList extends AppCompatActivity
 			public void run() {				
 				if(mOtpUpdateTask == this){
 					TokenList.this.fillData();
-					
 					mHandler.postDelayed(mOtpUpdateTask, 1000);
 				}
 			}			
@@ -240,7 +238,8 @@ public class TokenList extends AppCompatActivity
 				fillData();
 			}else{
 				//display an alert
-				showDialog(DIALOG_INVALID_PIN);
+				Snackbar.make(findViewById(R.id.mainPin), R.string.invalid_pin, Snackbar.LENGTH_LONG)
+						.setAction("Action", null).show();
 			}
 		}
 	};
@@ -276,24 +275,6 @@ public class TokenList extends AppCompatActivity
 //
 //	    return true;
 //	}
-	
-	private Dialog createAlertDialog(int messageId){
-		
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage(messageId)
-			   .setCancelable(false)
-			   .setPositiveButton(R.string.dialogPositive, dialogClose);
-		
-		return builder.create();
-		
-	}
-	
-	private DialogInterface.OnClickListener dialogClose = new 	DialogInterface.OnClickListener() {
-		
-		public void onClick(DialogInterface dialog, int which) {
-			dialog.dismiss();
-		}
-	};
 
 
 	@Override
@@ -301,10 +282,6 @@ public class TokenList extends AppCompatActivity
 		Dialog d;
 		
 		switch(id){
-		
-		case DIALOG_INVALID_PIN:
-			d = createAlertDialog(R.string.pinAlertInvalidPin);
-			break;
 			
 		case DIALOG_OTP:
 			d = new Dialog(this);
@@ -316,10 +293,10 @@ public class TokenList extends AppCompatActivity
 			image.setImageResource(R.drawable.androidtoken);
 			d.setOnDismissListener(dismissOtpDialog);
 			break;
-			
-		case DIALOG_DELETE_TOKEN:			
-			d = createDeleteTokenDialog();			
-			break;
+
+//		case DIALOG_DELETE_TOKEN:
+//			d = createDeleteTokenDialog();
+//			break;
 			
 		default:
 			d = null;
@@ -349,13 +326,13 @@ public class TokenList extends AppCompatActivity
 			mTimer = new Timer("otpCancel");
 			mTimer.schedule(new CloseOtpDialog(this), 10 * 1000);			
 			break;
-			
-		case DIALOG_DELETE_TOKEN:
-			mTokenToDeleteId = Long.parseLong("-1");
-			break;
+
 		}
 	}
 
+	/**
+	Show the context menu's delete token dialog
+	 **/
 	public void showDeleteTokenDialog(IToken token) {
 		DialogFragment dialog = new DeleteTokenDialog();
 
@@ -455,8 +432,10 @@ public class TokenList extends AppCompatActivity
 			toastRId = R.string.toastAdded;
 		}
 		
-		if(toastRId > 0)
-			Toast.makeText(getApplicationContext(), toastRId, Toast.LENGTH_SHORT).show();
+		if(toastRId > 0){
+			Snackbar.make(findViewById(R.id.list), toastRId, Snackbar.LENGTH_LONG)
+					.setAction("Action", null).show();
+		}
 	}
 
 	private boolean storeOtpAuthUrl(String url) {
@@ -504,13 +483,13 @@ public class TokenList extends AppCompatActivity
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 
-		menu.add(0, MENU_SETTINGS, 5, "Settings").setIcon(android.R.drawable.ic_menu_preferences);
-
 		menu.add(0, MENU_ADD_ID, 0, R.string.menu_add_token).setIcon(android.R.drawable.ic_menu_add);	
 		menu.add(0, MENU_PIN_CHANGE_ID, 1, R.string.menu_pin_change).setIcon(android.R.drawable.ic_lock_lock);
 		menu.add(0, MENU_PIN_REMOVE_ID, 2, R.string.menu_pin_remove).setIcon(android.R.drawable.ic_menu_delete);
 		menu.add(0, MENU_DELETE_TOKEN_ID, 3, R.string.menu_delete_token).setIcon(android.R.drawable.ic_menu_delete);
 		menu.add(0, MENU_SCAN_QR, 4, R.string.menu_scan).setIcon(android.R.drawable.ic_menu_camera);
+		menu.add(0, MENU_SETTINGS, 5, "Settings").setIcon(android.R.drawable.ic_menu_preferences);
+
 		return true;
 	}
 
@@ -531,8 +510,7 @@ public class TokenList extends AppCompatActivity
 				return true;
 
 			case MENU_DELETE_TOKEN_ID:
-				//todo: MM fix me
-				showDialog(DIALOG_DELETE_TOKEN);
+				showDeletePickerDialog();
 				return true;
 
 			case MENU_SCAN_QR:
@@ -546,7 +524,22 @@ public class TokenList extends AppCompatActivity
 		return super.onOptionsItemSelected(item);
 	}
 
-	private void scanQR() {		
+	private void showDeletePickerDialog(){
+		//todo: MM complete me
+		DialogFragment dialog = new DeleteTokenPickerDialog();
+
+//		Bundle args = new Bundle();
+//		args.putCharSequence("name", token.getFullName());
+//		args.putLong("tokenId", token.getId());
+
+		//dialog.setArguments(args);
+
+		dialog.show(getSupportFragmentManager(), "DeleteTokenPickerDialog");
+	}
+
+	private void scanQR() {
+
+		//todo: MM replace with google ML QR scanner
 		IntentIntegrator integrator = new IntentIntegrator(this);
 		integrator.initiateScan(IntentIntegrator.QR_CODE_TYPES);
 	}
@@ -603,13 +596,14 @@ public class TokenList extends AppCompatActivity
 
 			switch (item.getItemId()) {
 				case R.id.token_change_icon:
+					//todo: MM complete me
 					Toast.makeText(this,"change icon",Toast.LENGTH_SHORT).show();
 					return true;
 				case R.id.token_delete:
 					this.showDeleteTokenDialog(token);
 					return true;
-				case R.id.token_code_secret:
-					Toast.makeText(this,"copy seed",Toast.LENGTH_SHORT).show();
+				case R.id.token_copy_secret:
+					copyTokenSeedToClipboard(token);
 					return true;
 				default:
 					return super.onContextItemSelected(item);
@@ -623,10 +617,9 @@ public class TokenList extends AppCompatActivity
 		ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
 		clipboard.setPrimaryClip(ClipData.newPlainText( "Seed for " + token.getFullName(), token.getSeed()));
 
-		Toast toast = Toast.makeText(this,
-										getString(R.string.copy_token_seed_to_clipboard_ok, token.getName(),token.getSeed() ),
-										Toast.LENGTH_SHORT);
-		toast.show();
+
+		Snackbar.make(findViewById(R.id.list), R.string.token_seed_copied, Snackbar.LENGTH_LONG)
+				.setAction("Action", null).show();
 	}
 
 	//	@Override
@@ -660,173 +653,59 @@ public class TokenList extends AppCompatActivity
 		return otp;
 	}
 
-	private Dialog createDeleteTokenDialog() {
-		Dialog d;
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-		CharSequence[] tokenNames = new TokenHelper(mTokenDbHelper)
-											.getTokenFullNames();
-
-		builder.setTitle(R.string.app_name)
-			   .setSingleChoiceItems(tokenNames, -1, deleteTokenEvent)
-			   .setPositiveButton(R.string.dialogPositive, deleteTokenPositiveEvent)
-			   .setNegativeButton(R.string.dialogNegative, deleteTokenNegativeEvent);
-
-		d = builder.create();
-
-		return d;
-	}
+//	private Dialog createDeleteTokenDialog() {
+//		Dialog d;
+//		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//
+//		CharSequence[] tokenNames = new TokenHelper(mTokenDbHelper)
+//											.getTokenFullNames();
+//
+//		builder.setTitle(R.string.app_name)
+//			   .setSingleChoiceItems(tokenNames, -1, deleteTokenEvent)
+//			   .setPositiveButton(R.string.dialogPositive, deleteTokenPositiveEvent)
+//			   .setNegativeButton(R.string.dialogNegative, deleteTokenNegativeEvent);
+//
+//		d = builder.create();
+//
+//		return d;
+//	}
 	
-	private DialogInterface.OnClickListener deleteTokenPositiveEvent = new DialogInterface.OnClickListener() {
-
-		public void onClick(DialogInterface dialog, int which) {
-
-			if(mTokenToDeleteId > 0){
-				mTokenDbHelper.deleteToken(mTokenToDeleteId);
-
-				//reset
-				mTokenToDeleteId = -1L;
-				mtokenAdaptor = null;
-				fillData();
-				dialog.dismiss();
-
-				Snackbar.make(findViewById(R.id.list), R.string.token_is_deleted, Snackbar.LENGTH_LONG)
-						.setAction("Action", null).show();
-			}
-
-		}
-	};
+//	private DialogInterface.OnClickListener deleteTokenPositiveEvent = new DialogInterface.OnClickListener() {
+//
+//		public void onClick(DialogInterface dialog, int which) {
+//
+//			if(mTokenToDeleteId > 0){
+//				mTokenDbHelper.deleteToken(mTokenToDeleteId);
+//
+//				//reset
+//				mTokenToDeleteId = -1L;
+//				mtokenAdaptor = null;
+//				fillData();
+//				dialog.dismiss();
+//
+//				Snackbar.make(findViewById(R.id.list), R.string.token_is_deleted, Snackbar.LENGTH_LONG)
+//						.setAction("Action", null).show();
+//			}
+//
+//		}
+//	};
 	
-	private DialogInterface.OnClickListener deleteTokenNegativeEvent = new DialogInterface.OnClickListener() {
-		public void onClick(DialogInterface dialog, int which) {
-			dialog.dismiss();
-		}
-	};
-	
-	private DialogInterface.OnClickListener deleteTokenEvent = new DialogInterface.OnClickListener() {
-		
-		public void onClick(DialogInterface dialog, int which) {
+//	private DialogInterface.OnClickListener deleteTokenNegativeEvent = new DialogInterface.OnClickListener() {
+//		public void onClick(DialogInterface dialog, int which) {
+//			dialog.dismiss();
+//		}
+//	};
+//
+//	private DialogInterface.OnClickListener deleteTokenEvent = new DialogInterface.OnClickListener() {
+//
+//		public void onClick(DialogInterface dialog, int which) {
+//
+//			ArrayList<IToken> tokens = new TokenHelper(mTokenDbHelper)
+//												.getTokens();
+//
+//			IToken selectedToken = tokens.get(which);
+//			mTokenToDeleteId = selectedToken.getId();
+//		}
+//	};
 
-			ArrayList<IToken> tokens = new TokenHelper(mTokenDbHelper)
-												.getTokens();
-
-			IToken selectedToken = tokens.get(which);
-			mTokenToDeleteId = selectedToken.getId();
-		}
-	};
-	
-	private class TokenAdapter extends BaseAdapter
-	{
-		private Context mContext;
-		private TokenDbAdapter mDbAdapter;
-		private List<IToken> mTokens;
-		private ColorStateList mDefaultTextView;
-		
-		public TokenAdapter(Context context, TokenDbAdapter dbAdapter){
-			mContext = context;
-			mDbAdapter = dbAdapter;
-
-			Cursor cursor = mDbAdapter.fetchAllTokens();
-			startManagingCursor(cursor);
-			
-			//read all the tokens we have and put them into a list
-			//this will save hitting the db everytime we draw the
-			//ui with an update
-			
-			mTokens = new ArrayList<IToken>();
-			
-			cursor.moveToFirst();
-	        while (!cursor.isAfterLast()) {
-	            mTokens.add(TokenFactory.CreateToken(cursor));
-	            cursor.moveToNext();
-	        }
-			
-		}
-		
-		public int getCount() {			
-			return mTokens.size();
-		}
-
-		public Object getItem(int position) {
-			return mTokens.get(position);
-		}
-
-		public long getItemId(int position) {
-			return mTokens.get(position).getId();
-		}
-
-		public View getView(int position, View convertView, ViewGroup parent) {
-			LayoutInflater inflater = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			View row =  inflater.inflate(R.layout.token_list_row, null);
-
-			TextView nameText = (TextView)row.findViewById(R.id.tokenrowtextname);
-			TextView serialText = (TextView)row.findViewById(R.id.tokenrowtextserial);
-			TextView totpText = (TextView)row.findViewById(R.id.tokenRowTimeTokenOtp);
-
-			TextView faIcon = (TextView)row.findViewById(R.id.faIcon);
-			faIcon.setTypeface(FontManager.getTypeface(mContext, FontManager.FONTAWESOME));
-
-
-			ProgressBar totpProgressBar = (ProgressBar)row.findViewById(R.id.totpTimerProgressbar);
-			
-			
-			IToken currentToken = (IToken)getItem(position);
-
-			if(currentToken.getOrganisation() == null){
-				nameText.setText(currentToken.getName());
-			}else{
-				nameText.setText(currentToken.getName() + " (" + currentToken.getOrganisation() + ")");
-			}
-
-			if(currentToken.getSerialNumber().length() > 0)
-				serialText.setText(currentToken.getSerialNumber());
-			else{
-				TextView serialCaption = (TextView)row.findViewById(R.id.tokenrowtextserialcaption);
-				serialCaption.setVisibility(View.GONE);
-				serialText.setVisibility(View.GONE);
-			}
-			
-			//if the token is a time token, just display the current
-			//value for the token. Event tokens will still need to
-			//be click to display the otp
-			if(currentToken.getTokenType() == TokenDbAdapter.TOKEN_TYPE_TIME){
-				faIcon.setText(R.string.farClock);
-				totpText.setVisibility(View.VISIBLE);
-				totpText.setText(currentToken.generateOtp());
-				
-				totpProgressBar.setVisibility(View.VISIBLE);
-				
-				Date dt = new Date();
-				float curSec = (float)dt.getSeconds();
-				int progress;
-				
-				if(currentToken.getTimeStep() == 30){
-					
-					if(curSec > 30)
-						curSec = curSec - 30;
-						
-					progress = (int)(100 - ((curSec/30)*100));
-				}else{
-					progress = (int)(100 - ((curSec/60)*100));					
-				}
-				
-				totpProgressBar.setProgress(progress);
-
-				//when we get to the last 5 seconds, lets change
-				//the token colour to red as a warning
-				if(progress > 10){
-					totpText.setTextColor(nameText.getTextColors());
-				}else{
-					totpText.setTextColor(Color.RED);
-				}
-			}
-			else {
-				faIcon.setText(R.string.farPlusSquare);
-			}
-
-			return row;
-		}
-	
-	}
-	
 }

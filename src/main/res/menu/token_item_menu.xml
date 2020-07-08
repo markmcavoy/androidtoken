@@ -4,6 +4,6 @@
         android:title="@string/token_change_icon" />
     <item android:id="@+id/token_delete"
         android:title="@string/token_delete" />
-    <item android:id="@+id/token_code_secret"
+    <item android:id="@+id/token_copy_secret"
         android:title="@string/token_code_secret" />
 </menu>

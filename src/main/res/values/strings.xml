@@ -92,6 +92,8 @@
     <string name="preferences_security_pin">Use PIN to unlock</string>
     <string name="preferences_security_biometric">Use Biometric to unlock</string>
     <string name="preferences_display_grouping">Group token into two digit blocks</string>
+    <string name="invalid_pin">Invalid PIN</string>
+    <string name="token_seed_copied">Token seed copied</string>
 
 
 </resources>
