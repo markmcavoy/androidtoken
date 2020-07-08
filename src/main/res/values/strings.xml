@@ -60,6 +60,8 @@
     <!-- Preference Titles -->
     <string name="messages_header">Messages</string>
     <string name="sync_header">Sync</string>
+    <string name="preferences_security_title">Security</string>
+    <string name="preferences_display_title">Display Preferences</string>
 
     <!-- Messages Preferences -->
     <string name="signature_title">Your signature</string>
@@ -71,6 +73,9 @@
     <string name="attachment_summary_on">Automatically download attachments for incoming emails
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
+
+
+
     <string name="fasHourGlassStart">&#xf251;</string>
     <string name="farClock">&#xf017;</string>
     <string name="farPlusSquare">&#xf0fe;</string>
@@ -80,6 +85,13 @@
     <string name="copy_token_seed_to_clipboard_ok">Token seed copied</string>
     <string name="qr_fab">Scan QR</string>
 
+    <string name="delete">Delete</string>
+    <string name="delete_token_dialog_title">Delete Token</string>
+    <string name="delete_token_dialog_message">Are you sure you want to delete the token, [name]?</string>
+    <string name="token_is_deleted">Token as been deleted</string>
+    <string name="preferences_security_pin">Use PIN to unlock</string>
+    <string name="preferences_security_biometric">Use Biometric to unlock</string>
+    <string name="preferences_display_grouping">Group token into two digit blocks</string>
 
 
 </resources>

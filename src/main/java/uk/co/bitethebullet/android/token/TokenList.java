@@ -76,6 +76,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -89,7 +90,8 @@ import com.google.android.material.snackbar.Snackbar;
  * For more information about this project visit
  * http://code.google.com/p/androidtoken/
  */
-public class TokenList extends AppCompatActivity {
+public class TokenList extends AppCompatActivity
+	implements DeleteTokenDialog.DeleteTokenDialogListener {
 	
 	private static final int ACTIVITY_ADD_TOKEN = 0;
 	private static final int ACTIVITY_CHANGE_PIN = 1;
@@ -353,7 +355,35 @@ public class TokenList extends AppCompatActivity {
 			break;
 		}
 	}
-	
+
+	public void showDeleteTokenDialog(IToken token) {
+		DialogFragment dialog = new DeleteTokenDialog();
+
+		Bundle args = new Bundle();
+		args.putCharSequence("name", token.getFullName());
+		args.putLong("tokenId", token.getId());
+
+		dialog.setArguments(args);
+
+		dialog.show(getSupportFragmentManager(), "NoticeDialogFragment");
+	}
+
+	@Override
+	public void onDialogPositiveClick(DialogFragment dialog) {
+		Long tokenId = dialog.getArguments().getLong("tokenId");
+		mTokenDbHelper.deleteToken(tokenId);
+		mtokenAdaptor = null;
+		fillData();
+
+		Snackbar.make(findViewById(R.id.list), R.string.token_is_deleted, Snackbar.LENGTH_LONG)
+				.setAction("Action", null).show();
+	}
+
+	@Override
+	public void onDialogNegativeClick(DialogFragment dialog) {
+
+	}
+
 	private class CloseOtpDialog extends TimerTask{
 
 		private Activity mActivity;
@@ -501,6 +531,7 @@ public class TokenList extends AppCompatActivity {
 				return true;
 
 			case MENU_DELETE_TOKEN_ID:
+				//todo: MM fix me
 				showDialog(DIALOG_DELETE_TOKEN);
 				return true;
 
@@ -555,7 +586,7 @@ public class TokenList extends AppCompatActivity {
 	}
 
 	private IToken tokenAtPos(int position) {
-		ListView lv = (ListView)findViewById(android.R.id.list);
+		ListView lv = findViewById(R.id.listTokens);
 
 		IToken token = (IToken) lv.getAdapter().getItem(position);
 		return token;
@@ -575,7 +606,7 @@ public class TokenList extends AppCompatActivity {
 					Toast.makeText(this,"change icon",Toast.LENGTH_SHORT).show();
 					return true;
 				case R.id.token_delete:
-					Toast.makeText(this,"delete token",Toast.LENGTH_SHORT).show();
+					this.showDeleteTokenDialog(token);
 					return true;
 				case R.id.token_code_secret:
 					Toast.makeText(this,"copy seed",Toast.LENGTH_SHORT).show();
@@ -628,11 +659,11 @@ public class TokenList extends AppCompatActivity {
 		
 		return otp;
 	}
-	
+
 	private Dialog createDeleteTokenDialog() {
 		Dialog d;
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		
+
 		CharSequence[] tokenNames = new TokenHelper(mTokenDbHelper)
 											.getTokenFullNames();
 
@@ -640,16 +671,16 @@ public class TokenList extends AppCompatActivity {
 			   .setSingleChoiceItems(tokenNames, -1, deleteTokenEvent)
 			   .setPositiveButton(R.string.dialogPositive, deleteTokenPositiveEvent)
 			   .setNegativeButton(R.string.dialogNegative, deleteTokenNegativeEvent);
-		
+
 		d = builder.create();
 
 		return d;
 	}
 	
 	private DialogInterface.OnClickListener deleteTokenPositiveEvent = new DialogInterface.OnClickListener() {
-		
+
 		public void onClick(DialogInterface dialog, int which) {
-			
+
 			if(mTokenToDeleteId > 0){
 				mTokenDbHelper.deleteToken(mTokenToDeleteId);
 
@@ -658,13 +689,15 @@ public class TokenList extends AppCompatActivity {
 				mtokenAdaptor = null;
 				fillData();
 				dialog.dismiss();
+
+				Snackbar.make(findViewById(R.id.list), R.string.token_is_deleted, Snackbar.LENGTH_LONG)
+						.setAction("Action", null).show();
 			}
-			
+
 		}
 	};
 	
 	private DialogInterface.OnClickListener deleteTokenNegativeEvent = new DialogInterface.OnClickListener() {
-		
 		public void onClick(DialogInterface dialog, int which) {
 			dialog.dismiss();
 		}
