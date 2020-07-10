@@ -8,24 +8,27 @@ import android.os.Bundle;
 
 import androidx.fragment.app.DialogFragment;
 
+import java.util.ArrayList;
+
 import uk.co.bitethebullet.android.token.R;
 import uk.co.bitethebullet.android.token.dialogs.DeleteTokenDialog;
 
-//todo: MM add in radio button select list
 public class DeleteTokenPickerDialog extends DialogFragment {
 
     public interface DeleteTokenDialogListener {
-        public void onDialogPositiveClick(DialogFragment dialog);
-        public void onDialogNegativeClick(DialogFragment dialog);
+        public void onDeleteTokensDialogPositiveClick(DialogFragment dialog,
+                                                      ArrayList selectedTokensToDelete);
+        public void onDeleteTokensDialogNegativeClick(DialogFragment dialog);
     }
 
-    DeleteTokenDialog.DeleteTokenDialogListener listener;
+    DeleteTokenPickerDialog.DeleteTokenDialogListener listener;
+    ArrayList selectedItems;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            listener = (DeleteTokenDialog.DeleteTokenDialogListener) context;
+            listener = (DeleteTokenPickerDialog.DeleteTokenDialogListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException("Must implement DeleteTokenDialogListener");
         }
@@ -33,24 +36,33 @@ public class DeleteTokenPickerDialog extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        selectedItems = new ArrayList();
 
-        CharSequence tokenName = this.getArguments().getCharSequence("name");
-        String message = getResources()
-                .getString(R.string.delete_token_dialog_message)
-                .replace("[name]", tokenName);
-
+        CharSequence[] tokenNames = this.getArguments().getCharSequenceArray("tokens");
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage(message)
-                .setTitle(R.string.delete_token_dialog_title)
+        builder.setTitle(R.string.delete_token_dialog_title)
+                .setMultiChoiceItems(tokenNames, null,
+                                    new DialogInterface.OnMultiChoiceClickListener(){
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i, boolean isChecked) {
+                                            if (isChecked) {
+                                                selectedItems.add(i);
+                                            } else if (selectedItems.contains(i)) {
+                                                selectedItems.remove(Integer.valueOf(i));
+                                            }
+                                        }
+                                    })
                 .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        listener.onDialogPositiveClick(DeleteTokenPickerDialog.this);
+
+                    listener.onDeleteTokensDialogPositiveClick(DeleteTokenPickerDialog.this,
+                                                                    selectedItems);
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        listener.onDialogNegativeClick(DeleteTokenPickerDialog.this);
+                        listener.onDeleteTokensDialogNegativeClick(DeleteTokenPickerDialog.this);
                     }
                 });
         // Create the AlertDialog object and return it

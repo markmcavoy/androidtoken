@@ -36,6 +36,7 @@ import uk.co.bitethebullet.android.token.tokens.HotpToken;
 import uk.co.bitethebullet.android.token.tokens.IToken;
 import uk.co.bitethebullet.android.token.tokens.ITokenMeta;
 import uk.co.bitethebullet.android.token.tokens.TokenFactory;
+import uk.co.bitethebullet.android.token.tokens.TokenHelper;
 import uk.co.bitethebullet.android.token.tokens.TokenMetaData;
 import uk.co.bitethebullet.android.token.util.FontManager;
 import uk.co.bitethebullet.android.token.util.SeedConvertor;
@@ -52,6 +53,7 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.media.session.MediaSession;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -92,7 +94,8 @@ import com.google.android.material.snackbar.Snackbar;
  * http://code.google.com/p/androidtoken/
  */
 public class TokenList extends AppCompatActivity
-	implements DeleteTokenDialog.DeleteTokenDialogListener {
+	implements DeleteTokenDialog.DeleteTokenDialogListener,
+				DeleteTokenPickerDialog.DeleteTokenDialogListener{
 	
 	private static final int ACTIVITY_ADD_TOKEN = 0;
 	private static final int ACTIVITY_CHANGE_PIN = 1;
@@ -114,7 +117,6 @@ public class TokenList extends AppCompatActivity
 		
 	private Boolean mHasPassedPin = false;
 	private Long mSelectedTokenId = Long.parseLong("-1");
-	private Long mTokenToDeleteId = Long.parseLong("-1");
 	private Timer mTimer = null;
 	private TokenDbAdapter mTokenDbHelper = null;
 	private Handler mHandler;
@@ -166,6 +168,21 @@ public class TokenList extends AppCompatActivity
 			}else{
 				tvEmpty.setVisibility(View.VISIBLE);
 			}
+
+			lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+				@Override
+				public void onItemClick(AdapterView<?> adapterView, View view, int index, long id) {
+					//get the token, we only handle the click
+					//event if the token is a HOTP, in which
+					//case we then display a dialog with the
+					//token code
+					String otp = generateOtp(id);
+
+					if(otp != null){
+						//todo: MM show the modal with the token otp
+					}
+				}
+			});
         }
         
         mHandler = new Handler();
@@ -243,92 +260,57 @@ public class TokenList extends AppCompatActivity
 			}
 		}
 	};
-	
-	
-//	protected boolean onLongListItemClick(View v, int pos, final long id) {
-//	    Log.i("", "onLongListItemClick id=" + id);
+
+
+
+//	@Override
+//	protected Dialog onCreateDialog(int id) {
+//		Dialog d;
 //
-//	    //prompt the user to see if they want to delete the current
-//	    //selected token
-//		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//		switch(id){
 //
-//		Cursor c = mTokenDbHelper.fetchAllTokens();
-//		startManagingCursor(c);
+//		case DIALOG_OTP:
+//			d = new Dialog(this);
 //
-//		builder.setTitle(R.string.app_name)
-//			   .setMessage(R.string.confirmDelete)
-//			   .setIcon(android.R.drawable.ic_dialog_alert)
-//			   .setPositiveButton(R.string.dialogPositive, new DialogInterface.OnClickListener() {
-//					public void onClick(DialogInterface dialog, int which) {
-//						mTokenDbHelper.deleteToken(id);
+//			d.setContentView(R.layout.otpdialog);
+//			d.setTitle(R.string.otpDialogTitle);
 //
-//						Toast.makeText(getApplicationContext(), R.string.toastDeleted, Toast.LENGTH_SHORT).show();
+//			ImageView image = (ImageView) d.findViewById(R.id.otpDialogImage);
+//			image.setImageResource(R.drawable.androidtoken);
+//			d.setOnDismissListener(dismissOtpDialog);
+//			break;
 //
-//						mtokenAdaptor = null;
-//						fillData();
-//					}
-//			   })
-//			   .setNegativeButton(R.string.dialogNegative, null);
+//		default:
+//			d = null;
 //
-//		builder.show();
+//		}
 //
-//
-//	    return true;
+//		return d;
 //	}
 
-
-	@Override
-	protected Dialog onCreateDialog(int id) {
-		Dialog d;
-		
-		switch(id){
-			
-		case DIALOG_OTP:
-			d = new Dialog(this);
-
-			d.setContentView(R.layout.otpdialog);
-			d.setTitle(R.string.otpDialogTitle);
-
-			ImageView image = (ImageView) d.findViewById(R.id.otpDialogImage);
-			image.setImageResource(R.drawable.androidtoken);
-			d.setOnDismissListener(dismissOtpDialog);
-			break;
-
-//		case DIALOG_DELETE_TOKEN:
-//			d = createDeleteTokenDialog();
-//			break;
-			
-		default:
-			d = null;
-		
-		}
-		
-		return d;
-	}
-
 	
-	@Override
-	protected void onPrepareDialog(int id, Dialog dialog) {
-		super.onPrepareDialog(id, dialog);
-		
-		switch(id){
-		case DIALOG_OTP:
-			
-			TextView text = (TextView) dialog.findViewById(R.id.otpDialogText);
-			
-			
-			//occurs if we rotate the screen while displaying a token
-			if(mSelectedTokenId != -1)
-			{
-				text.setText(generateOtp(mSelectedTokenId));
-			}
-			
-			mTimer = new Timer("otpCancel");
-			mTimer.schedule(new CloseOtpDialog(this), 10 * 1000);			
-			break;
-
-		}
-	}
+//	@Override
+//	protected void onPrepareDialog(int id, Dialog dialog) {
+//		super.onPrepareDialog(id, dialog);
+//
+//		switch(id){
+//		case DIALOG_OTP:
+//
+//			TextView text = (TextView) dialog.findViewById(R.id.otpDialogText);
+//
+//
+//			//occurs if we rotate the screen while displaying a token
+//			if(mSelectedTokenId != -1)
+//			{
+//				text.setText(generateOtp(mSelectedTokenId));
+//			}
+//
+//			mTimer = new Timer("otpCancel");
+//			mTimer.schedule(new CloseOtpDialog(this), 10 * 1000);
+//			break;
+//
+//		}
+//	}
 
 	/**
 	Show the context menu's delete token dialog
@@ -361,26 +343,27 @@ public class TokenList extends AppCompatActivity
 
 	}
 
-	private class CloseOtpDialog extends TimerTask{
 
-		private Activity mActivity;
-		
-		public CloseOtpDialog(Activity a){
-			mActivity = a;
-		}
-		
-		@Override
-		public void run() {
-			try
-			{
-				mActivity.dismissDialog(DIALOG_OTP);
-			}
-			catch(IllegalArgumentException ex){
-				
-			}
-		}
-		
-	}
+//	private class CloseOtpDialog extends TimerTask{
+//
+//		private Activity mActivity;
+//
+//		public CloseOtpDialog(Activity a){
+//			mActivity = a;
+//		}
+//
+//		@Override
+//		public void run() {
+//			try
+//			{
+//				mActivity.dismissDialog(DIALOG_OTP);
+//			}
+//			catch(IllegalArgumentException ex){
+//
+//			}
+//		}
+//
+//	}
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
@@ -525,16 +508,40 @@ public class TokenList extends AppCompatActivity
 	}
 
 	private void showDeletePickerDialog(){
-		//todo: MM complete me
 		DialogFragment dialog = new DeleteTokenPickerDialog();
 
-//		Bundle args = new Bundle();
-//		args.putCharSequence("name", token.getFullName());
-//		args.putLong("tokenId", token.getId());
+		CharSequence[] tokenNames = new TokenHelper(mTokenDbHelper)
+											.getTokenFullNames();
 
-		//dialog.setArguments(args);
+		Bundle args = new Bundle();
+		args.putCharSequenceArray("tokens", tokenNames);
 
+		dialog.setArguments(args);
 		dialog.show(getSupportFragmentManager(), "DeleteTokenPickerDialog");
+	}
+
+	@Override
+	public void onDeleteTokensDialogPositiveClick(DialogFragment dialog, ArrayList selectedTokens) {
+		TokenHelper tokenHelper = new TokenHelper(this.mTokenDbHelper);
+		ArrayList tokens = tokenHelper.getTokens();
+		ArrayList tokensToDelete =  new ArrayList();
+
+		//workout the tokens we need to delete, then just remove them
+		//one by one
+		for(int i = 0; i < selectedTokens.size(); i++){
+			tokensToDelete.add(tokens.get((int)selectedTokens.get(i)));
+		}
+
+		for(int i = 0; i < tokensToDelete.size(); i++){
+			mTokenDbHelper.deleteToken(((IToken)tokensToDelete.get(i)).getId());
+		}
+		mtokenAdaptor = null;
+		fillData();
+	}
+
+	@Override
+	public void onDeleteTokensDialogNegativeClick(DialogFragment dialog) {
+		//ignore nothing required
 	}
 
 	private void scanQR() {
@@ -598,6 +605,7 @@ public class TokenList extends AppCompatActivity
 				case R.id.token_change_icon:
 					//todo: MM complete me
 					Toast.makeText(this,"change icon",Toast.LENGTH_SHORT).show();
+
 					return true;
 				case R.id.token_delete:
 					this.showDeleteTokenDialog(token);
@@ -622,7 +630,7 @@ public class TokenList extends AppCompatActivity
 				.setAction("Action", null).show();
 	}
 
-	//	@Override
+//		@Override
 //	protected void onListItemClick(ListView l, View v, int position, long id) {
 //		super.onListItemClick(l, v, position, id);
 //
@@ -645,67 +653,14 @@ public class TokenList extends AppCompatActivity
 		IToken token = TokenFactory.CreateToken(cursor);
 		cursor.close();
 		
-		String otp = token.generateOtp();
-		
-		if(token instanceof HotpToken)
-			mTokenDbHelper.incrementTokenCount(tokenId);		
-		
-		return otp;
-	}
 
-//	private Dialog createDeleteTokenDialog() {
-//		Dialog d;
-//		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//
-//		CharSequence[] tokenNames = new TokenHelper(mTokenDbHelper)
-//											.getTokenFullNames();
-//
-//		builder.setTitle(R.string.app_name)
-//			   .setSingleChoiceItems(tokenNames, -1, deleteTokenEvent)
-//			   .setPositiveButton(R.string.dialogPositive, deleteTokenPositiveEvent)
-//			   .setNegativeButton(R.string.dialogNegative, deleteTokenNegativeEvent);
-//
-//		d = builder.create();
-//
-//		return d;
-//	}
-	
-//	private DialogInterface.OnClickListener deleteTokenPositiveEvent = new DialogInterface.OnClickListener() {
-//
-//		public void onClick(DialogInterface dialog, int which) {
-//
-//			if(mTokenToDeleteId > 0){
-//				mTokenDbHelper.deleteToken(mTokenToDeleteId);
-//
-//				//reset
-//				mTokenToDeleteId = -1L;
-//				mtokenAdaptor = null;
-//				fillData();
-//				dialog.dismiss();
-//
-//				Snackbar.make(findViewById(R.id.list), R.string.token_is_deleted, Snackbar.LENGTH_LONG)
-//						.setAction("Action", null).show();
-//			}
-//
-//		}
-//	};
-	
-//	private DialogInterface.OnClickListener deleteTokenNegativeEvent = new DialogInterface.OnClickListener() {
-//		public void onClick(DialogInterface dialog, int which) {
-//			dialog.dismiss();
-//		}
-//	};
-//
-//	private DialogInterface.OnClickListener deleteTokenEvent = new DialogInterface.OnClickListener() {
-//
-//		public void onClick(DialogInterface dialog, int which) {
-//
-//			ArrayList<IToken> tokens = new TokenHelper(mTokenDbHelper)
-//												.getTokens();
-//
-//			IToken selectedToken = tokens.get(which);
-//			mTokenToDeleteId = selectedToken.getId();
-//		}
-//	};
+		if(token instanceof HotpToken){
+			String otp = token.generateOtp();
+			mTokenDbHelper.incrementTokenCount(tokenId);
+			return otp;
+		}
+		
+		return null;
+	}
 
 }
