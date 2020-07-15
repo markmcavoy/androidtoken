@@ -44,6 +44,7 @@ import uk.co.bitethebullet.android.token.zxing.IntentIntegrator;
 import uk.co.bitethebullet.android.token.zxing.IntentResult;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -107,11 +108,11 @@ public class TokenList extends AppCompatActivity
 	private static final int MENU_PIN_REMOVE_ID = Menu.FIRST + 2;
 	private static final int MENU_DELETE_TOKEN_ID = Menu.FIRST + 3;
 	private static final int MENU_SCAN_QR = Menu.FIRST + 4;
-	
+
 	private static final int DIALOG_INVALID_PIN = 0;
 	private static final int DIALOG_OTP = 1;
 	private static final int DIALOG_DELETE_TOKEN = 2;
-	
+
 	private static final String KEY_HAS_PASSED_PIN = "pinValid";
 	private static final String KEY_SELECTED_TOKEN_ID = "selectedTokenId";
 		
@@ -179,7 +180,7 @@ public class TokenList extends AppCompatActivity
 					String otp = generateOtp(id);
 
 					if(otp != null){
-						//todo: MM show the modal with the token otp
+						showHotpToken(otp);
 					}
 				}
 			});
@@ -262,55 +263,46 @@ public class TokenList extends AppCompatActivity
 	};
 
 
+	/**
+	 * handles showing the HOTP token in a self closing dialog
+	 * @param token
+	 */
+	private void showHotpToken(String token){
+		final AlertDialog.Builder dialog = new AlertDialog.Builder(this)
+													.setTitle(token);
 
-//	@Override
-//	protected Dialog onCreateDialog(int id) {
-//		Dialog d;
-//
-//		switch(id){
-//
-//		case DIALOG_OTP:
-//			d = new Dialog(this);
-//
-//			d.setContentView(R.layout.otpdialog);
-//			d.setTitle(R.string.otpDialogTitle);
-//
-//			ImageView image = (ImageView) d.findViewById(R.id.otpDialogImage);
-//			image.setImageResource(R.drawable.androidtoken);
-//			d.setOnDismissListener(dismissOtpDialog);
-//			break;
-//
-//		default:
-//			d = null;
-//
-//		}
-//
-//		return d;
-//	}
+		dialog.setPositiveButton(R.string.dismiss, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int whichButton) {
+			}
+		});
 
-	
-//	@Override
-//	protected void onPrepareDialog(int id, Dialog dialog) {
-//		super.onPrepareDialog(id, dialog);
-//
-//		switch(id){
-//		case DIALOG_OTP:
-//
-//			TextView text = (TextView) dialog.findViewById(R.id.otpDialogText);
-//
-//
-//			//occurs if we rotate the screen while displaying a token
-//			if(mSelectedTokenId != -1)
-//			{
-//				text.setText(generateOtp(mSelectedTokenId));
-//			}
-//
-//			mTimer = new Timer("otpCancel");
-//			mTimer.schedule(new CloseOtpDialog(this), 10 * 1000);
-//			break;
-//
-//		}
-//	}
+		final AlertDialog alert = dialog.create();
+		alert.show();
+
+		// Hide after some seconds
+		final Handler handler  = new Handler();
+		final Runnable runnable = new Runnable() {
+			@Override
+			public void run() {
+				if (alert.isShowing()) {
+					alert.dismiss();
+				}
+			}
+		};
+
+		alert.setOnDismissListener(new DialogInterface.OnDismissListener() {
+			@Override
+			public void onDismiss(DialogInterface dialog) {
+				handler.removeCallbacks(runnable);
+			}
+		});
+
+		handler.postDelayed(runnable, 8000);
+	}
+
+
+
 
 	/**
 	Show the context menu's delete token dialog
@@ -343,27 +335,6 @@ public class TokenList extends AppCompatActivity
 
 	}
 
-
-//	private class CloseOtpDialog extends TimerTask{
-//
-//		private Activity mActivity;
-//
-//		public CloseOtpDialog(Activity a){
-//			mActivity = a;
-//		}
-//
-//		@Override
-//		public void run() {
-//			try
-//			{
-//				mActivity.dismissDialog(DIALOG_OTP);
-//			}
-//			catch(IllegalArgumentException ex){
-//
-//			}
-//		}
-//
-//	}
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
@@ -630,14 +601,7 @@ public class TokenList extends AppCompatActivity
 				.setAction("Action", null).show();
 	}
 
-//		@Override
-//	protected void onListItemClick(ListView l, View v, int position, long id) {
-//		super.onListItemClick(l, v, position, id);
-//
-//		mSelectedTokenId = id;
-//		showDialog(DIALOG_OTP);
-//	}
-	
+
 	private DialogInterface.OnDismissListener dismissOtpDialog = new DialogInterface.OnDismissListener() {
 		
 		public void onDismiss(DialogInterface dialog) {

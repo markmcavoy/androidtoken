@@ -95,5 +95,8 @@
     <string name="invalid_pin">Invalid PIN</string>
     <string name="token_seed_copied">Token seed copied</string>
 
+    <string name="hotp_dialog_title">HOTP Token</string>
+    <string name="dismiss">Dismiss</string>
+
 
 </resources>
