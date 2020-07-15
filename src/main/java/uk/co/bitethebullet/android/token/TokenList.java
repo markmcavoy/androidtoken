@@ -1,5 +1,5 @@
 /*
- * Copyright Mark McAvoy - www.bitethebullet.co.uk 2009
+ * Copyright Mark McAvoy - www.bitethebullet.co.uk 2009 - 2020
  * 
  * This file is part of Android Token.
  *
@@ -38,6 +38,7 @@ import uk.co.bitethebullet.android.token.tokens.ITokenMeta;
 import uk.co.bitethebullet.android.token.tokens.TokenFactory;
 import uk.co.bitethebullet.android.token.tokens.TokenHelper;
 import uk.co.bitethebullet.android.token.tokens.TokenMetaData;
+import uk.co.bitethebullet.android.token.tokens.TotpToken;
 import uk.co.bitethebullet.android.token.util.FontManager;
 import uk.co.bitethebullet.android.token.util.SeedConvertor;
 import uk.co.bitethebullet.android.token.zxing.IntentIntegrator;
@@ -102,16 +103,12 @@ public class TokenList extends AppCompatActivity
 	private static final int ACTIVITY_CHANGE_PIN = 1;
 	private static final int ACTIVITY_REMOVE_PIN = 2;
 
-	private static final int MENU_SETTINGS = Menu.FIRST + 5;
 	private static final int MENU_ADD_ID = Menu.FIRST;
 	private static final int MENU_PIN_CHANGE_ID = Menu.FIRST + 1;
 	private static final int MENU_PIN_REMOVE_ID = Menu.FIRST + 2;
 	private static final int MENU_DELETE_TOKEN_ID = Menu.FIRST + 3;
 	private static final int MENU_SCAN_QR = Menu.FIRST + 4;
-
-	private static final int DIALOG_INVALID_PIN = 0;
-	private static final int DIALOG_OTP = 1;
-	private static final int DIALOG_DELETE_TOKEN = 2;
+	private static final int MENU_SETTINGS = Menu.FIRST + 5;
 
 	private static final String KEY_HAS_PASSED_PIN = "pinValid";
 	private static final String KEY_SELECTED_TOKEN_ID = "selectedTokenId";
@@ -618,7 +615,7 @@ public class TokenList extends AppCompatActivity
 		cursor.close();
 		
 
-		if(token instanceof HotpToken){
+		if(!(token instanceof TotpToken)){
 			String otp = token.generateOtp();
 			mTokenDbHelper.incrementTokenCount(tokenId);
 			return otp;

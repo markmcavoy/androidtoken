@@ -1,5 +1,5 @@
 /*
- * Copyright Mark McAvoy - www.bitethebullet.co.uk 2009
+ * Copyright Mark McAvoy - www.bitethebullet.co.uk 2009 - 2020
  * 
  * This file is part of Android Token.
  *
