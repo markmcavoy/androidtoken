@@ -74,11 +74,35 @@
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
 
-
-
     <string name="fasHourGlassStart">&#xf251;</string>
+
     <string name="farClock">&#xf017;</string>
     <string name="farPlusSquare">&#xf0fe;</string>
+
+    <string name="fabAmazon">&#xf270;</string>
+    <string name="fabApple">&#xf179;</string>
+    <string name="fabAtlassian">&#xf77b;</string>
+    <string name="fabAws">&#xf375;</string>
+    <string name="fabBitbucket">&#xf171;</string>
+    <string name="fabEbay">&#xf4f4;</string>
+    <string name="fabEtsy">&#xf2d7;</string>
+    <string name="fabEvernote">&#xf839;</string>
+    <string name="fabFacebook">&#xf09a;</string>
+    <string name="fabGithub">&#xf09b;</string>
+    <string name="fabGoogle">&#xf1a0;</string>
+    <string name="fabInstagram">&#xf16d;</string>
+    <string name="fabJira">&#xf7b1;</string>
+    <string name="fabMicrosoft">&#xf3ca;</string>
+    <string name="fabPaypal">&#xf1ed;</string>
+    <string name="fabSaleforce">&#xf83b;</string>
+    <string name="fabSnapchat">&#xf2ab;</string>
+    <string name="fabSquarespace">&#xf5be;</string>
+    <string name="fabStripe">&#xf429;</string>
+    <string name="fabTrello">&#xf181;</string>
+    <string name="fabWordpress">&#xf19a;</string>
+
+
+
     <string name="token_change_icon">Change Icon</string>
     <string name="token_delete">Delete Token</string>
     <string name="token_code_secret">Copy Seed to Clipboard</string>

@@ -18,6 +18,7 @@ import java.util.List;
 import uk.co.bitethebullet.android.token.R;
 import uk.co.bitethebullet.android.token.datalayer.TokenDbAdapter;
 import uk.co.bitethebullet.android.token.tokens.IToken;
+import uk.co.bitethebullet.android.token.tokens.IconSuggestor;
 import uk.co.bitethebullet.android.token.tokens.TokenFactory;
 import uk.co.bitethebullet.android.token.util.FontManager;
 
@@ -69,13 +70,19 @@ public class TokenAdapter extends BaseAdapter
         TextView totpText = (TextView)row.findViewById(R.id.tokenRowTimeTokenOtp);
 
         TextView faIcon = (TextView)row.findViewById(R.id.faIcon);
-        faIcon.setTypeface(FontManager.getTypeface(mContext, FontManager.FONTAWESOME));
 
 
         ProgressBar totpProgressBar = (ProgressBar)row.findViewById(R.id.totpTimerProgressbar);
 
 
         IToken currentToken = (IToken)getItem(position);
+
+        //get an icon based on the organisation
+        IconSuggestor iconSuggestor = new IconSuggestor();
+        IconSuggestor.IconResult iconResult = iconSuggestor.getSuggestedIcon(currentToken, mContext);
+
+        faIcon.setTypeface(FontManager.getTypeface(mContext, iconResult.getFont()));
+        faIcon.setText(iconResult.getContent());
 
         if(currentToken.getOrganisation() == null){
             nameText.setText(currentToken.getName());
@@ -95,7 +102,6 @@ public class TokenAdapter extends BaseAdapter
         //value for the token. Event tokens will still need to
         //be click to display the otp
         if(currentToken.getTokenType() == TokenDbAdapter.TOKEN_TYPE_TIME){
-            faIcon.setText(R.string.farClock);
             totpText.setVisibility(View.VISIBLE);
             totpText.setText(currentToken.generateOtp());
 
@@ -124,9 +130,6 @@ public class TokenAdapter extends BaseAdapter
             }else{
                 totpText.setTextColor(Color.RED);
             }
-        }
-        else {
-            faIcon.setText(R.string.farPlusSquare);
         }
 
         return row;
