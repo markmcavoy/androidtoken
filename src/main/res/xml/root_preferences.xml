@@ -1,14 +1,14 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory app:title="@string/preferences_security_title">
 
-        <SwitchPreferenceCompat
-            app:key="enablePin"
-            app:title="@string/preferences_security_pin" />
-
-        <SwitchPreferenceCompat
-            app:key="enableBiometric"
-            app:title="@string/preferences_security_biometric" />
+        <ListPreference
+            android:title="@string/security_lock"
+            android:key="securityLock"
+            android:defaultValue="0"
+            android:entries="@array/listSecurityPrefKeys"
+            android:entryValues="@array/listSecurityPrefValues" />
 
     </PreferenceCategory>
 

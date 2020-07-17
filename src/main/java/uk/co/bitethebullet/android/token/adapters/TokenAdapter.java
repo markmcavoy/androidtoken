@@ -84,7 +84,7 @@ public class TokenAdapter extends BaseAdapter
         faIcon.setTypeface(FontManager.getTypeface(mContext, iconResult.getFont()));
         faIcon.setText(iconResult.getContent());
 
-        if(currentToken.getOrganisation() == null){
+        if(currentToken.getOrganisation() == null || currentToken.getOrganisation().length() == 0){
             nameText.setText(currentToken.getName());
         }else{
             nameText.setText(currentToken.getName() + " (" + currentToken.getOrganisation() + ")");

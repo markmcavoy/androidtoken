@@ -18,6 +18,19 @@
         <item>Base 32</item>
         <item>Base 64</item>
     </string-array>
+
+    <string-array name="listSecurityPrefKeys">
+        <item>No Security</item>
+        <item>PIN Number</item>
+        <item>Biometric</item>
+    </string-array>
+    <string-array name="listSecurityPrefValues">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+
     <!-- Reply Preference -->
     <string-array name="reply_entries">
         <item>Reply</item>

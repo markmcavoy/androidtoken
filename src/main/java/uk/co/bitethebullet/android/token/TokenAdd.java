@@ -38,6 +38,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -537,8 +538,8 @@ public class TokenAdd extends Activity {
 
 	private void showStepTwo() {
 		//show the next step
-		LinearLayout step1 = (LinearLayout)findViewById(R.id.tokenAddStep1);
-		LinearLayout step2 = (LinearLayout)findViewById(R.id.tokenAddStep2);
+		RelativeLayout step1 = (RelativeLayout)findViewById(R.id.tokenAddStep1);
+		RelativeLayout step2 = (RelativeLayout)findViewById(R.id.tokenAddStep2);
 		
 		step1.setVisibility(View.GONE);
 		step2.setVisibility(View.VISIBLE);

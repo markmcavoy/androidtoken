@@ -113,8 +113,7 @@
     <string name="delete_token_dialog_title">Delete Token</string>
     <string name="delete_token_dialog_message">Are you sure you want to delete the token, [name]?</string>
     <string name="token_is_deleted">Token as been deleted</string>
-    <string name="preferences_security_pin">Use PIN to unlock</string>
-    <string name="preferences_security_biometric">Use Biometric to unlock</string>
+    <string name="security_lock">Security Protection</string>
     <string name="preferences_display_grouping">Group token into two digit blocks</string>
     <string name="invalid_pin">Invalid PIN</string>
     <string name="token_seed_copied">Token seed copied</string>
