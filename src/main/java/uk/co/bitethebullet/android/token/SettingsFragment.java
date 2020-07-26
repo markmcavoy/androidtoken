@@ -1,6 +1,8 @@
 package uk.co.bitethebullet.android.token;
 
+import androidx.biometric.BiometricManager;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
@@ -22,6 +24,18 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
                 setLockPreferencesData(lockPreferences);
                 return false;
+            }
+        });
+
+        lockPreferences.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+
+            @Override
+            public boolean onPreferenceChange(Preference preference,
+                                              Object newValue) {
+
+                String oldValue = lockPreferences.getValue();
+                Log.d("Preference", "Old Value: " + oldValue + ", New Value: " + newValue.toString());
+                return true;
             }
         });
     }
@@ -48,7 +62,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     }
 
     protected boolean getDeviceSupportsBioMetrics(){
-        //todo: MM complete me
-        return false;
+        BiometricManager biometricManager = BiometricManager.from(this.getContext());
+        return biometricManager.canAuthenticate() == BiometricManager.BIOMETRIC_SUCCESS;
     }
 }
