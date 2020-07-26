@@ -1,16 +1,31 @@
 package uk.co.bitethebullet.android.token;
 
 import androidx.biometric.BiometricManager;
+
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
 import java.util.Arrays;
 
+import uk.co.bitethebullet.android.token.dialogs.PinDefintionDialog;
+
 public class SettingsFragment extends PreferenceFragmentCompat {
+
+    private FragmentActivity myContext;
+
+    @Override
+    public void onAttach(Activity activity) {
+        myContext=(FragmentActivity) activity;
+        super.onAttach(activity);
+    }
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -34,6 +49,19 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                               Object newValue) {
 
                 String oldValue = lockPreferences.getValue();
+
+                Log.d("Preference", "IF show pin entry number");
+
+                //if we have change to use a PIN code we need to get the
+                //new pin value to secure the app
+                if(newValue.toString().equals("1") && !oldValue.equals("1")){
+
+                    Log.d("Preference", "show pin entry number");
+
+                    DialogFragment newPinDefintion = new PinDefintionDialog();
+                    newPinDefintion.show(myContext.getSupportFragmentManager(), "pinNewDefintion");
+                }
+
                 Log.d("Preference", "Old Value: " + oldValue + ", New Value: " + newValue.toString());
                 return true;
             }
