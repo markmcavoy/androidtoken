@@ -17,7 +17,8 @@ import java.util.Arrays;
 
 import uk.co.bitethebullet.android.token.dialogs.PinDefintionDialog;
 
-public class SettingsFragment extends PreferenceFragmentCompat {
+public class SettingsFragment extends PreferenceFragmentCompat
+    implements PinDefintionDialog.PinDefinitionDialogListener {
 
     private FragmentActivity myContext;
 
@@ -92,5 +93,15 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     protected boolean getDeviceSupportsBioMetrics(){
         BiometricManager biometricManager = BiometricManager.from(this.getContext());
         return biometricManager.canAuthenticate() == BiometricManager.BIOMETRIC_SUCCESS;
+    }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+
     }
 }

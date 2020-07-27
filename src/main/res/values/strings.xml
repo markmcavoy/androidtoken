@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="noTokens">No Tokens Defined</string>
-    <string name="app_name">Android Token</string>
+    <string name="app_name">Auth Token</string>
     <string name="menu_add_token">Add Token</string>
     <string name="menu_pin_change">Change PIN</string>
     <string name="menu_pin_remove">Remove Pin</string>
@@ -31,7 +31,7 @@
     <string name="tokenAddDialogInvalidSeedTooShort2">Token Seed is too short</string>
     <string name="tokenAddDialogInvalidSeedNotHex">Token Seed is Invalid, only enter a-f, A-F or 0-9 characters.</string>
     <string name="tokenrowtextserialcaption">S/N:</string>
-    <string name="pinChangeExistingPin">Enter Existing PIN</string>
+    <string name="pinChangeExistingPin">Enter PIN</string>
     <string name="pinChangeNew1">New PIN</string>
     <string name="pinChangeNew2">Confirm PIN</string>
     <string name="pinChangeSubmit">Save</string>
@@ -120,6 +120,8 @@
 
     <string name="hotp_dialog_title">HOTP Token</string>
     <string name="dismiss">Dismiss</string>
+    <string name="ok">Ok</string>
+    <string name="set_pin">Set PIN</string>
 
 
 </resources>

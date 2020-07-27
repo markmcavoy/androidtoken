@@ -52,6 +52,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -82,6 +83,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
+import androidx.preference.PreferenceManager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -130,6 +132,9 @@ public class TokenList extends AppCompatActivity
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+
+		SharedPreferences sharedPreferences =
+				PreferenceManager.getDefaultSharedPreferences(this);
         
         //check if we need to restore from a saveinstancestate
         if(savedInstanceState != null){
@@ -148,8 +153,10 @@ public class TokenList extends AppCompatActivity
         Button loginBtn = (Button)findViewById(R.id.mainLogin);
         
         loginBtn.setOnClickListener(validatePin);
+
+		Boolean hasPin = false; //sharedPreferences.getString("securityLock", "0").equals("1");
         
-        if(PinManager.hasPinDefined(this) & !mHasPassedPin){
+        if(hasPin){
         	mMainPin.setVisibility(View.VISIBLE);
         	mMainList.setVisibility(View.GONE);
         }else{
