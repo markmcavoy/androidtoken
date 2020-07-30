@@ -68,6 +68,7 @@
 			android:layout_marginTop="10dip"
 			android:inputType="number"
 			android:password="true"
+			android:selectAllOnFocus="true"
 			android:textSize="18sp" />
 
 		<Button

@@ -1,6 +1,7 @@
 package uk.co.bitethebullet.android.token.adapters;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -10,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import androidx.preference.PreferenceManager;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,10 +30,14 @@ public class TokenAdapter extends BaseAdapter
     private Context mContext;
     private TokenDbAdapter mDbAdapter;
     private List<IToken> mTokens;
+    SharedPreferences sharedPreferences;
 
     public TokenAdapter(Context context, TokenDbAdapter dbAdapter){
         mContext = context;
         mDbAdapter = dbAdapter;
+
+         sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
 
         Cursor cursor = mDbAdapter.fetchAllTokens();
 
@@ -47,6 +54,25 @@ public class TokenAdapter extends BaseAdapter
         }
 
         cursor.close();
+    }
+
+    public static String otpFormatter(String otp, boolean groupInTwos){
+        if(groupInTwos){
+            StringBuilder builder = new StringBuilder();
+            int k = 0;
+            for (int i = 0; i < otp.length(); i++) {
+                builder.append(otp.charAt(i));
+                k++;
+
+                if(k >= 2){
+                    k = 0;
+                    builder.append("  ");
+                }
+            }
+            return builder.toString();
+        }else{
+            return otp;
+        }
     }
 
     public int getCount() {
@@ -68,10 +94,7 @@ public class TokenAdapter extends BaseAdapter
         TextView nameText = (TextView)row.findViewById(R.id.tokenrowtextname);
         TextView serialText = (TextView)row.findViewById(R.id.tokenrowtextserial);
         TextView totpText = (TextView)row.findViewById(R.id.tokenRowTimeTokenOtp);
-
         TextView faIcon = (TextView)row.findViewById(R.id.faIcon);
-
-
         ProgressBar totpProgressBar = (ProgressBar)row.findViewById(R.id.totpTimerProgressbar);
 
 
@@ -103,7 +126,8 @@ public class TokenAdapter extends BaseAdapter
         //be click to display the otp
         if(currentToken.getTokenType() == TokenDbAdapter.TOKEN_TYPE_TIME){
             totpText.setVisibility(View.VISIBLE);
-            totpText.setText(currentToken.generateOtp());
+            totpText.setText(otpFormatter(currentToken.generateOtp(),
+                            sharedPreferences.getBoolean("groupIntoTwoDigits", false)));
 
             totpProgressBar.setVisibility(View.VISIBLE);
 

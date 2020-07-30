@@ -68,6 +68,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -126,6 +127,7 @@ public class TokenList extends AppCompatActivity
 	private FrameLayout mMainList;
 	
 	private TokenAdapter mtokenAdaptor = null;
+	SharedPreferences sharedPreferences;
 	
     /** Called when the activity is first created. */
     @Override
@@ -133,15 +135,14 @@ public class TokenList extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-		SharedPreferences sharedPreferences =
-				PreferenceManager.getDefaultSharedPreferences(this);
-        
         //check if we need to restore from a saveinstancestate
         if(savedInstanceState != null){
         	mHasPassedPin = savedInstanceState.getBoolean(KEY_HAS_PASSED_PIN);
         	mSelectedTokenId = savedInstanceState.getLong(KEY_SELECTED_TOKEN_ID);
         }
-        
+		sharedPreferences =
+				PreferenceManager.getDefaultSharedPreferences(this);
+
         mTokenDbHelper = new TokenDbAdapter(this);
         mTokenDbHelper.open();
         
@@ -151,48 +152,48 @@ public class TokenList extends AppCompatActivity
         mMainList = (FrameLayout)findViewById(R.id.list);
         
         Button loginBtn = (Button)findViewById(R.id.mainLogin);
-        
         loginBtn.setOnClickListener(validatePin);
-
-		Boolean hasPin = false; //sharedPreferences.getString("securityLock", "0").equals("1");
         
-        if(hasPin){
+        if(PinManager.hasPinDefined(this)){
         	mMainPin.setVisibility(View.VISIBLE);
         	mMainList.setVisibility(View.GONE);
         }else{
         	mMainList.setVisibility(View.VISIBLE);
         	mMainPin.setVisibility(View.GONE);
         	mHasPassedPin = true;
-        	fillData();
-
-			ListView lv = (ListView)findViewById(R.id.listTokens);
-			TextView tvEmpty = (TextView)findViewById(R.id.empty);
-
-			if(lv.getCount() > 0){
-				tvEmpty.setVisibility(View.GONE);
-			}else{
-				tvEmpty.setVisibility(View.VISIBLE);
-			}
-
-			lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-				@Override
-				public void onItemClick(AdapterView<?> adapterView, View view, int index, long id) {
-					//get the token, we only handle the click
-					//event if the token is a HOTP, in which
-					//case we then display a dialog with the
-					//token code
-					String otp = generateOtp(id);
-
-					if(otp != null){
-						showHotpToken(otp);
-					}
-				}
-			});
-        }
+			InitTokenList();
+		}
         
         mHandler = new Handler();
-                
-        ListView lv = (ListView)findViewById(R.id.listTokens);
+    }
+
+	private void InitTokenList() {
+		fillData();
+
+		ListView lv = (ListView)findViewById(R.id.listTokens);
+		TextView tvEmpty = (TextView)findViewById(R.id.empty);
+
+		if(lv.getCount() > 0){
+			tvEmpty.setVisibility(View.GONE);
+		}else{
+			tvEmpty.setVisibility(View.VISIBLE);
+		}
+
+		lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> adapterView, View view, int index, long id) {
+				//get the token, we only handle the click
+				//event if the token is a HOTP, in which
+				//case we then display a dialog with the
+				//token code
+				String otp = generateOtp(id);
+
+				if(otp != null){
+					showHotpToken(otp);
+				}
+			}
+		});
+
 		registerForContextMenu(lv);
 
 		FloatingActionButton fab = findViewById(R.id.fab);
@@ -202,8 +203,8 @@ public class TokenList extends AppCompatActivity
 				scanQR();
 			}
 		});
-    }
-    
+	}
+
 
 	@Override
 	protected void onDestroy() {
@@ -246,19 +247,31 @@ public class TokenList extends AppCompatActivity
 		outState.putLong(KEY_SELECTED_TOKEN_ID, mSelectedTokenId);
 	}
 	
-	private OnClickListener validatePin = new 	OnClickListener() {
+	private OnClickListener validatePin = new OnClickListener() {
 		
 		public void onClick(View v) {
-			
-			String pin = ((EditText)findViewById(R.id.mainPinEdit)).getText().toString();
+
+			//close the keyboard, so we can show/see the snackbar
+			//message if the pin is invalid
+			InputMethodManager inputManager = (InputMethodManager)
+					getSystemService(Context.INPUT_METHOD_SERVICE);
+
+			inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
+					InputMethodManager.HIDE_NOT_ALWAYS);
+
+			EditText mainPinEdit = (EditText)findViewById(R.id.mainPinEdit);
+			String pin = mainPinEdit.getText().toString();
 			
 			if(PinManager.validatePin(v.getContext(), pin)){
 				//then display the list view
 				mMainList.setVisibility(View.VISIBLE);
 				mMainPin.setVisibility(View.GONE);
 				mHasPassedPin = true;
-				fillData();
+				InitTokenList();
 			}else{
+				//reset the input edittext
+				mainPinEdit.setText("");
+
 				//display an alert
 				Snackbar.make(findViewById(R.id.mainPin), R.string.invalid_pin, Snackbar.LENGTH_LONG)
 						.setAction("Action", null).show();
@@ -301,7 +314,6 @@ public class TokenList extends AppCompatActivity
 				handler.removeCallbacks(runnable);
 			}
 		});
-
 		handler.postDelayed(runnable, 8000);
 	}
 
@@ -343,15 +355,24 @@ public class TokenList extends AppCompatActivity
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 
-		if(mHasPassedPin){
-			menu.findItem(MENU_PIN_REMOVE_ID).setEnabled(PinManager.hasPinDefined(this));
+		for (int i = 0; i < menu.size(); i++){
+			menu.getItem(i).setEnabled(true);
 		}
 
 		//if we have no tokens disable the delete token option
 		ListView lv = findViewById(R.id.listTokens);
 		menu.findItem(MENU_DELETE_TOKEN_ID).setEnabled(lv.getCount() > 0);
 
-		return mHasPassedPin;
+		if(mHasPassedPin){
+			menu.findItem(MENU_PIN_REMOVE_ID).setEnabled(PinManager.hasPinDefined(this));
+		}else{
+			for (int i = 0; i < menu.size(); i++){
+				menu.getItem(i).setEnabled(false);
+			}
+		}
+
+		super.onPrepareOptionsMenu(menu);
+		return true;
 	}
 
 	private void fillData() {
@@ -623,7 +644,8 @@ public class TokenList extends AppCompatActivity
 		
 
 		if(!(token instanceof TotpToken)){
-			String otp = token.generateOtp();
+			String otp = TokenAdapter.otpFormatter(token.generateOtp(),
+					sharedPreferences.getBoolean("groupIntoTwoDigits", false));
 			mTokenDbHelper.incrementTokenCount(tokenId);
 			return otp;
 		}

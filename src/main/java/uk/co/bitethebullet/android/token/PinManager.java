@@ -23,7 +23,10 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
+
+import androidx.preference.PreferenceManager;
 
 import uk.co.bitethebullet.android.token.datalayer.TokenDbAdapter;
 import uk.co.bitethebullet.android.token.tokens.HotpToken;
@@ -31,56 +34,40 @@ import uk.co.bitethebullet.android.token.tokens.HotpToken;
 public class PinManager {
 
 	private static final String SALT = "EE08F4A6-8497-4330-8CD5-8A4ABD93CD46";
+	public static final String PIN_CODE_SETTING = "PIN_CODE";
 	
 	public static Boolean hasPinDefined(Context c){
-		TokenDbAdapter db = new TokenDbAdapter(c);
-		db.open();
-		
-		Cursor cursor = db.fetchPin();
-		
-		Boolean hasPin = cursor.getCount() > 0;
-		
-		cursor.close();
-		db.close();
-		
-		return hasPin;
+		SharedPreferences sharedPreferences =
+				PreferenceManager.getDefaultSharedPreferences(c);
+
+		return sharedPreferences.getString("securityLock", "0").equals("1");
 	}
 	
 	public static Boolean validatePin(Context c, String pin){
 
-		TokenDbAdapter db = new TokenDbAdapter(c);
-		db.open();
+		SharedPreferences sharedPreferences =
+				PreferenceManager.getDefaultSharedPreferences(c);
+		String storedPin = sharedPreferences.getString(PIN_CODE_SETTING, "");
 
-		Boolean isValid = false;
-		String userPin = createPinHash(pin);
-		Cursor cursor = db.fetchPin();
-		
-		if(cursor != null){
-			String dbPin = cursor.getString(cursor.getColumnIndexOrThrow(TokenDbAdapter.KEY_PIN_HASH));
-			isValid = dbPin.contentEquals(userPin);
-		}
-		
-		cursor.close();		
-		db.close();
-		
-		return isValid;
+		return storedPin.equals(pin);
 	}
 	
 	public static void storePin(Context c, String pin){
-		TokenDbAdapter db =  new TokenDbAdapter(c);
-		db.open();		
-		db.createOrUpdatePin(createPinHash(pin));		
-		db.close();
+		SharedPreferences sharedPreferences =
+				PreferenceManager.getDefaultSharedPreferences(c);
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		editor.putString(PinManager.PIN_CODE_SETTING, pin);
+		editor.commit();
 	}
 	
-	public static void removePin(Context c){
-		TokenDbAdapter db = new TokenDbAdapter(c);
-		db.open();
-		
-		db.deletePin();
-		
-		db.close();
-	}
+//	public static void removePin(Context c){
+//		TokenDbAdapter db = new TokenDbAdapter(c);
+//		db.open();
+//
+//		db.deletePin();
+//
+//		db.close();
+//	}
 	
 	private static String createPinHash(String pin) {
 		
