@@ -2,6 +2,9 @@
 <resources>
     <string name="noTokens">No Tokens Defined</string>
     <string name="app_name">Auth Token</string>
+    <string name="app_name_add">Auth Token - Add Token</string>
+    <string name="app_name_change_pin">Auth Token - Change Pin</string>
+    <string name="app_name_about">Auth Token - About</string>
     <string name="menu_add_token">Add Token</string>
     <string name="menu_pin_change">Change PIN</string>
     <string name="menu_pin_remove">Remove Pin</string>
@@ -44,6 +47,8 @@
     <string name="otpDialogTitle">One Time Password</string>
     <string name="tokenSeedFormat">Input Format</string>
     <string name="menu_scan">Scan QR</string>
+    <string name="menu_settings">Settings</string>
+    <string name="menu_about">About</string>
     <string name="otpAuthUrlInvalid">otpauth url is not valid</string>
     <string name="otpAuthTokenTypeInvalid">Invalid token type</string>
     <string name="otpAuthMissingCounterParameter">The counter parameter is required when creating an HOTP token</string>
@@ -57,6 +62,8 @@
     <string name="toastInvalidQr">Invalid QR code</string>
     <string name="tokenAddDialogInvalidSeedConvertion">Unable to convert the supplied value to a hex seed</string>
     <string name="tokenAddDialogUnableToSwitchFormat">Unable to switch input format, value entered is invalid</string>
+    <string name="git_hub_url">https://github.com/markmcavoy/androidtoken</string>
+    <string name="about_info">About info</string>
     <!-- Preference Titles -->
     <string name="messages_header">Messages</string>
     <string name="sync_header">Sync</string>
@@ -102,7 +109,6 @@
     <string name="fabWordpress">&#xf19a;</string>
 
 
-
     <string name="token_change_icon">Change Icon</string>
     <string name="token_delete">Delete Token</string>
     <string name="token_code_secret">Copy Seed to Clipboard</string>
@@ -122,6 +128,15 @@
     <string name="dismiss">Dismiss</string>
     <string name="ok">Ok</string>
     <string name="set_pin">Set PIN</string>
+    <string name="title_activity_about">About</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
 
 
 </resources>

@@ -50,8 +50,9 @@
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:orientation="vertical"
-		android:padding="5sp"
-		android:visibility="gone">
+		android:visibility="gone"
+		android:paddingLeft="15dp"
+		android:paddingRight="15dp">
 
 		<TextView
 			android:id="@+id/mainPinText"
@@ -59,7 +60,8 @@
 			android:layout_height="wrap_content"
 			android:layout_marginTop="5sp"
 			android:text="@string/pinChangeExistingPin"
-			android:textSize="20dip" />
+			android:textSize="20dip"
+			/>
 
 		<EditText
 			android:id="@+id/mainPinEdit"

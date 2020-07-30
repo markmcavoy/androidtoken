@@ -105,6 +105,7 @@ public class TokenList extends AppCompatActivity
 	private static final int ACTIVITY_ADD_TOKEN = 0;
 	private static final int ACTIVITY_CHANGE_PIN = 1;
 	private static final int ACTIVITY_REMOVE_PIN = 2;
+	private static final int ACTIVITY_ABOUT = 3;
 
 	private static final int MENU_ADD_ID = Menu.FIRST;
 	private static final int MENU_PIN_CHANGE_ID = Menu.FIRST + 1;
@@ -112,6 +113,7 @@ public class TokenList extends AppCompatActivity
 	private static final int MENU_DELETE_TOKEN_ID = Menu.FIRST + 3;
 	private static final int MENU_SCAN_QR = Menu.FIRST + 4;
 	private static final int MENU_SETTINGS = Menu.FIRST + 5;
+	private static final int MENU_ABOUT = Menu.FIRST + 6;
 
 	private static final String KEY_HAS_PASSED_PIN = "pinValid";
 	private static final String KEY_SELECTED_TOKEN_ID = "selectedTokenId";
@@ -364,7 +366,7 @@ public class TokenList extends AppCompatActivity
 		menu.findItem(MENU_DELETE_TOKEN_ID).setEnabled(lv.getCount() > 0);
 
 		if(mHasPassedPin){
-			menu.findItem(MENU_PIN_REMOVE_ID).setEnabled(PinManager.hasPinDefined(this));
+			//menu.findItem(MENU_PIN_REMOVE_ID).setEnabled(PinManager.hasPinDefined(this));
 		}else{
 			for (int i = 0; i < menu.size(); i++){
 				menu.getItem(i).setEnabled(false);
@@ -464,10 +466,11 @@ public class TokenList extends AppCompatActivity
 
 		menu.add(0, MENU_ADD_ID, 0, R.string.menu_add_token).setIcon(android.R.drawable.ic_menu_add);	
 		menu.add(0, MENU_PIN_CHANGE_ID, 1, R.string.menu_pin_change).setIcon(android.R.drawable.ic_lock_lock);
-		menu.add(0, MENU_PIN_REMOVE_ID, 2, R.string.menu_pin_remove).setIcon(android.R.drawable.ic_menu_delete);
-		menu.add(0, MENU_DELETE_TOKEN_ID, 3, R.string.menu_delete_token).setIcon(android.R.drawable.ic_menu_delete);
-		menu.add(0, MENU_SCAN_QR, 4, R.string.menu_scan).setIcon(android.R.drawable.ic_menu_camera);
-		menu.add(0, MENU_SETTINGS, 5, "Settings").setIcon(android.R.drawable.ic_menu_preferences);
+		//menu.add(0, MENU_PIN_REMOVE_ID, 2, R.string.menu_pin_remove).setIcon(android.R.drawable.ic_menu_delete);
+		menu.add(0, MENU_DELETE_TOKEN_ID, 2, R.string.menu_delete_token).setIcon(android.R.drawable.ic_menu_delete);
+		menu.add(0, MENU_SCAN_QR, 3, R.string.menu_scan).setIcon(android.R.drawable.ic_menu_camera);
+		menu.add(0, MENU_SETTINGS, 4, R.string.menu_settings).setIcon(android.R.drawable.ic_menu_preferences);
+		menu.add(0, MENU_ABOUT, 5, R.string.menu_about);
 
 		return true;
 	}
@@ -499,8 +502,17 @@ public class TokenList extends AppCompatActivity
 			case MENU_SETTINGS:
 				showSettings();
 				return true;
+
+			case MENU_ABOUT:
+				showAbout();
+				return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	private void showAbout(){
+		Intent intent = new Intent(this, About.class);
+		startActivityForResult(intent, ACTIVITY_ABOUT);
 	}
 
 	private void showDeletePickerDialog(){

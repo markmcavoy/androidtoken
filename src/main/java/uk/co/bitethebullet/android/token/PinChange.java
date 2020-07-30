@@ -29,7 +29,9 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 
-public class PinChange extends Activity {
+import androidx.appcompat.app.AppCompatActivity;
+
+public class PinChange extends AppCompatActivity {
 
 	private static final int DIALOG_INVALID_EXISTING_PIN = 0;
 	private static final int DIALOG_DIFF_NEW_PIN = 1;

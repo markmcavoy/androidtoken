@@ -12,12 +12,12 @@
         android:smallScreens="true" />
 
     <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+
     <application
         android:icon="@drawable/androidtoken"
         android:label="@string/app_name"
         android:theme="@style/Theme.AppCompat.Light">
-
-        <activity android:name=".SettingActivity"></activity>
+        <activity android:name=".SettingActivity" />
         <activity
             android:name=".TokenList"
             android:label="@string/app_name">
@@ -36,13 +36,15 @@
         </activity>
         <activity
             android:name=".TokenAdd"
-            android:label="@string/app_name" />
+            android:label="@string/app_name_add" />
         <activity
             android:name=".PinChange"
-            android:label="@string/app_name" />
+            android:label="@string/app_name_change_pin" />
         <activity
             android:name=".PinRemove"
             android:label="@string/app_name" />
+        <activity android:name=".About"
+            android:label="@string/app_name_about" />
     </application>
 
 </manifest>

@@ -43,11 +43,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemSelectedListener;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import uk.co.bitethebullet.android.token.datalayer.TokenDbAdapter;
 import uk.co.bitethebullet.android.token.tokens.HotpToken;
 import uk.co.bitethebullet.android.token.util.*;
 
-public class TokenAdd extends Activity {
+public class TokenAdd extends AppCompatActivity {
 
 	private static final int DIALOG_STEP1_NO_NAME = 0;
 	private static final int DIALOG_STEP1_NO_SERIAL = 1;
