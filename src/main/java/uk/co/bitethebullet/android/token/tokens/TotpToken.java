@@ -19,10 +19,12 @@
  */
 package uk.co.bitethebullet.android.token.tokens;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.TimeZone;
 
 import uk.co.bitethebullet.android.token.datalayer.TokenDbAdapter;
+import uk.co.bitethebullet.android.token.util.SeedConvertor;
 
 
 /**
@@ -59,7 +61,33 @@ public class TotpToken extends HotpToken {
 		//calculate the moving counter using the time
 		return generateOtp(Calendar.getInstance(TimeZone.getTimeZone("UTC")));
 	}
-	
+
+	@Override
+	public String getUrl() {
+		//otpauth://totp/organisation:alice@google.com?secret=JBSWY3DPEHPK3PXP"
+		try {
+			//convert the seed from hex to base32
+			String base32Secret = SeedConvertor.ConvertFromBA(SeedConvertor.ConvertFromEncodingToBA(getSeed(), SeedConvertor.HEX_FORMAT),
+					SeedConvertor.BASE32_FORMAT);
+
+			StringBuilder buffer = new StringBuilder();
+			buffer.append("otpauth://totp/");
+
+			if (getOrganisation() != null && getOrganisation().length() > 0) {
+				buffer.append(java.net.URLEncoder.encode(getOrganisation()));
+				buffer.append(":");
+			}
+
+			buffer.append(java.net.URLEncoder.encode(getName()));
+			buffer.append("?secret=");
+			buffer.append(base32Secret);
+
+			return buffer.toString();
+		}catch(IOException ex){
+			return null;
+		}
+	}
+
 	public String generateOtp(Calendar currentTime){
 		long time = currentTime.getTimeInMillis()/1000L;
 		super.setEventCount(time/new Long(mTimeStep));

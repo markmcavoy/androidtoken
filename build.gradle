@@ -9,6 +9,7 @@ buildscript {
 }
 repositories {
     mavenCentral()
+    jcenter()
     maven {
         url "https://maven.google.com"
     }
@@ -50,6 +51,8 @@ dependencies {
     implementation 'androidx.biometric:biometric:1.0.1'
     implementation 'androidx.navigation:navigation-fragment:2.3.0'
     implementation 'androidx.navigation:navigation-ui:2.3.0'
+    implementation 'androidmads.library.qrgenearator:QRGenearator:1.0.4'
+    implementation 'com.google.zxing:core:3.3.2'
 
     testImplementation 'junit:junit:4.13'
     testImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'

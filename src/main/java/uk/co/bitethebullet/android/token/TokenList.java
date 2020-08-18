@@ -610,17 +610,30 @@ public class TokenList extends AppCompatActivity
 		if (tokenClicked) {
 
 			switch (item.getItemId()) {
-				case R.id.token_change_icon:
-					//todo: MM complete me
-					Toast.makeText(this,"change icon",Toast.LENGTH_SHORT).show();
 
+				//this menu option is hidden, so no need to complete
+				case R.id.token_change_icon:
+					Toast.makeText(this,"change icon",Toast.LENGTH_SHORT).show();
 					return true;
+
 				case R.id.token_delete:
 					this.showDeleteTokenDialog(token);
 					return true;
+
 				case R.id.token_copy_secret:
 					copyTokenSeedToClipboard(token);
 					return true;
+
+				case R.id.token_generate_qr_code:
+					//generate the QR image and output
+					//to a activity with the image/QR shown
+					Intent intent = new Intent(this, QRCodeActivity.class);
+					intent.putExtra("qrUrl", token.getUrl());
+					intent.putExtra("fullName", token.getFullName());
+					startActivity(intent);
+
+					return true;
+
 				default:
 					return super.onContextItemSelected(item);
 			}

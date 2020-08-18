@@ -19,6 +19,7 @@
  */
 package uk.co.bitethebullet.android.token.tokens;
 
+import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
@@ -30,6 +31,7 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 import uk.co.bitethebullet.android.token.datalayer.TokenDbAdapter;
+import uk.co.bitethebullet.android.token.util.SeedConvertor;
 
 
 /**
@@ -129,6 +131,35 @@ public class HotpToken implements IToken {
 
 	public void setOtpLength(int otpLength) {
 		this.mOtpLength = otpLength;
+	}
+
+
+	public String getUrl() {
+		//create the uri for the token that can be used to generate the QR code
+		//otpauth://hotp/organisation:alice@google.com?secret=JBSWY3DPEHPK3PXP&counter=10"
+		try {
+			//convert the seed from hex to base32
+			String base32Secret = SeedConvertor.ConvertFromBA(SeedConvertor.ConvertFromEncodingToBA(getSeed(), SeedConvertor.HEX_FORMAT),
+					SeedConvertor.BASE32_FORMAT);
+
+			StringBuilder buffer = new StringBuilder();
+			buffer.append("otpauth://hotp/");
+
+			if (getOrganisation() != null && getOrganisation().length() > 0) {
+				buffer.append(java.net.URLEncoder.encode(getOrganisation()));
+				buffer.append(":");
+			}
+
+			buffer.append(java.net.URLEncoder.encode(getName()));
+			buffer.append("?secret=");
+			buffer.append(base32Secret);
+			buffer.append("&counter=");
+			buffer.append(getEventCount());
+
+			return buffer.toString();
+		}catch(IOException ex){
+			return null;
+		}
 	}
 
 	public String getFullName(){

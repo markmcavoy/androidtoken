@@ -6,4 +6,6 @@
         android:title="@string/token_delete" />
     <item android:id="@+id/token_copy_secret"
         android:title="@string/token_code_secret" />
+    <item android:id="@+id/token_generate_qr_code"
+         android:title="@string/token_generate_qr_code" />
 </menu>

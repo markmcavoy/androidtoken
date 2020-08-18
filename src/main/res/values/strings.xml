@@ -62,8 +62,10 @@
     <string name="toastInvalidQr">Invalid QR code</string>
     <string name="tokenAddDialogInvalidSeedConvertion">Unable to convert the supplied value to a hex seed</string>
     <string name="tokenAddDialogUnableToSwitchFormat">Unable to switch input format, value entered is invalid</string>
-    <string name="git_hub_url">https://github.com/markmcavoy/androidtoken</string>
-    <string name="about_info">About info</string>
+    <string name="git_hub_url"><a href="https://github.com/markmcavoy/androidtoken">https://github.com/markmcavoy/androidtoken</a></string>
+    <string name="about_info">Auth Token is the free and open source TOTP and HOTP application from
+        Zalabria Limited.\n\nIf you would like us to help you with your Android project please get in
+        touch. <a href="http://www.zalabria.com/">Zalabria</a></string>
     <!-- Preference Titles -->
     <string name="messages_header">Messages</string>
     <string name="sync_header">Sync</string>
@@ -112,6 +114,7 @@
     <string name="token_change_icon">Change Icon</string>
     <string name="token_delete">Delete Token</string>
     <string name="token_code_secret">Copy Seed to Clipboard</string>
+    <string name="token_generate_qr_code">Generate QR Code</string>
     <string name="copy_token_seed_to_clipboard_ok">Token seed copied</string>
     <string name="qr_fab">Scan QR</string>
 

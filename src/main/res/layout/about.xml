@@ -21,7 +21,8 @@
         android:id="@+id/about_info"
         android:text="@string/about_info"
         android:layout_marginTop="30dp"
-        android:layout_below="@id/about_title"/>
+        android:layout_below="@id/about_title"
+        android:textSize="18dp" />
 
     <TextView
         android:layout_width="match_parent"
@@ -29,6 +30,7 @@
         android:id="@+id/about_url"
         android:text="@string/git_hub_url"
         android:layout_marginTop="30dp"
+        android:textSize="18dp"
         android:layout_below="@id/about_info"/>
 
 </RelativeLayout>

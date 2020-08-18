@@ -40,4 +40,6 @@ public interface IToken {
 	public String getSeed();
 
 	public String getFullName();
+
+	public String getUrl();
 }
