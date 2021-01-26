@@ -41,6 +41,19 @@
     android:inputType="number"
     android:password="true" >
 </EditText>
+
+<CheckBox
+    android:id="@+id/pinChangeMaskSeed"
+    android:text="@string/pinChangeMaskSeed"
+    android:onClick="setNoValidateClickable"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"></CheckBox>
+<CheckBox
+    android:id="@+id/pinChangeNoValidate"
+    android:text="@string/pinChangeNoValidate"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"></CheckBox>
+
 <Button android:text="@string/pinChangeSubmit" 
 		android:id="@+id/pinChangeSubmit" 
 		android:layout_width="wrap_content" 

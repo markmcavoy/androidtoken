@@ -33,6 +33,8 @@
 <string name="pinChangeExistingPin">Enter Existing PIN</string>
 <string name="pinChangeNew1">New PIN</string>
 <string name="pinChangeNew2">Confirm PIN</string>
+<string name="pinChangeMaskSeed">Use PIN to obscure seeds</string>
+<string name="pinChangeNoValidate">Allow incorrect PINs, producing incorrect tokens</string>
 <string name="pinChangeSubmit">Save</string>
 <string name="pinAlertInvalidPin">Existing PIN is invalid</string>
 <string name="pinAlertNewPinsDifferent">The new PINs are not the same</string>
