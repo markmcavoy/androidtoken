@@ -553,8 +553,6 @@ public class TokenList extends AppCompatActivity
 	}
 
 	private void scanQR() {
-
-		//todo: MM replace with google ML QR scanner
 		IntentIntegrator integrator = new IntentIntegrator(this);
 		integrator.initiateScan(IntentIntegrator.QR_CODE_TYPES);
 	}
