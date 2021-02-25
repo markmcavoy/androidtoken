@@ -1,19 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<string-array name="tokenType">
-<item>Event Token</item>
-<item>Time Token</item>
-</string-array>
-<string-array name="otpLength"><item>6</item>
-<item>7</item>
-<item>8</item>
-</string-array>
-<string-array name="timeStep"><item>30 seconds</item>
-<item>60 seconds</item>
-</string-array>
-<string-array name="tokenSeedFormatType">
-    <item >Hex</item>
-    <item >Base 32</item>
-    <item >Base 64</item>
-</string-array>
+    <string-array name="tokenType">
+        <item>Event Token</item>
+        <item>Time Token</item>
+    </string-array>
+    <string-array name="otpLength">
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+    </string-array>
+    <string-array name="timeStep">
+        <item>30 seconds</item>
+        <item>60 seconds</item>
+    </string-array>
+    <string-array name="tokenSeedFormatType">
+        <item>Hex</item>
+        <item>Base 32</item>
+        <item>Base 64</item>
+    </string-array>
+
+    <string-array name="listSecurityPrefKeys">
+        <item>No Security</item>
+        <item>PIN Number</item>
+        <item>Biometric</item>
+    </string-array>
+    <string-array name="listSecurityPrefValues">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+
+    <!-- Reply Preference -->
+    <string-array name="reply_entries">
+        <item>Reply</item>
+        <item>Reply to all</item>
+    </string-array>
+
+    <string-array name="reply_values">
+        <item>reply</item>
+        <item>reply_all</item>
+    </string-array>
 </resources>

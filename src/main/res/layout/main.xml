@@ -5,58 +5,80 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:visibility="visible">
-        
-    <LinearLayout
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:id="@+id/mainList"
-    android:visibility="gone">    
-	    <ListView android:id="@+id/android:list"  
-	    			android:layout_width="fill_parent" 
-	    			android:layout_height="wrap_content">
-	    </ListView>
-	    
-		<TextView  
-			android:id="@+id/android:empty"
-		    android:layout_width="fill_parent" 
-		    android:layout_height="wrap_content" 
-		    android:text="@string/noTokens"
-		    />
-	</LinearLayout>
-	
-	<LinearLayout 
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:id="@+id/mainPin"
-    android:visibility="gone"
-    android:padding="5sp"> 
-    
-    	<TextView  
+
+	<FrameLayout
+		android:id="@+id/list"
+		android:orientation="vertical"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:visibility="gone">
+
+		<LinearLayout
+		android:orientation="vertical"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/mainList"
+		android:visibility="visible">
+
+
+			<ListView android:id="@+id/listTokens"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content" />
+
+			<TextView
+				android:id="@+id/empty"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:text="@string/noTokens"
+				android:gravity="center"
+				android:layout_marginTop="30dp"
+				/>
+
+		</LinearLayout>
+		<com.google.android.material.floatingactionbutton.FloatingActionButton
+			android:id="@+id/fab"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="end|bottom"
+			android:src="@drawable/baseline_add_black_24dp"
+			android:contentDescription="@string/qr_fab"
+			android:layout_margin="16dp" />
+	</FrameLayout>
+
+	<LinearLayout
+		android:id="@+id/mainPin"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:visibility="gone"
+		android:paddingLeft="15dp"
+		android:paddingRight="15dp">
+
+		<TextView
 			android:id="@+id/mainPinText"
-		    android:layout_width="fill_parent" 
-		    android:layout_height="wrap_content" 
-		    android:text="@string/pinChangeExistingPin"
-		    android:layout_marginTop="5sp"
-		    android:textSize="20dip"		    
-		    />
-		    
-		 <EditText
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="5sp"
+			android:text="@string/pinChangeExistingPin"
+			android:textSize="20dip"
+			/>
+
+		<EditText
 			android:id="@+id/mainPinEdit"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
-			android:textSize="18sp"
-			android:password="true"
 			android:layout_marginTop="10dip"
 			android:inputType="number"
-		 />
-		 
-		<Button android:text="@string/mainLogin" 
-				android:id="@+id/mainLogin" 
-				android:layout_width="wrap_content" 
-				android:layout_height="wrap_content"
-				android:layout_marginTop="10sp"></Button>    
-    </LinearLayout>
+			android:password="true"
+			android:selectAllOnFocus="true"
+			android:textSize="18sp" />
+
+		<Button
+			android:id="@+id/mainLogin"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="10sp"
+			android:text="@string/mainLogin"></Button>
+	</LinearLayout>
     		    
 </RelativeLayout>

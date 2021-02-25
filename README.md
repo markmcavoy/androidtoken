@@ -1,15 +1,18 @@
-Android Token
+Auth Token (formerly, Android Token)
 =============
-Android Token is a project to create http://www.openauthentication.org/ software tokens for the Android platform. Turning a mobile phone into a One Time Password (OTP) generation device which can be used in the place of hardware tokens.
+Auth Token, (formerly Android Token) is an Android applicaion used to generate one time passwords (OTP). The application is open source and written in Java. The application supports both HOTP (event tokens, http://tools.ietf.org/html/rfc4226) and TOTP tokens (time tokens, http://tools.ietf.org/html/draft-mraihi-totp-timebased-00).
 
-Support for provisioning tokens using the https://github.com/google/google-authenticator/wiki/Key-Uri-Format KeyUriFormat and QR codes as well as manual creation.
+The application supports provisioning tokens using 
+- [KeyUriFormat](https://github.com/google/google-authenticator/wiki/Key-Uri-Format) 
+- QR codes
+- Manual creation.
 
 The application can optionally be protected with a PIN to stop unauthorised access to the software tokens.
 
-The project supports both http://tools.ietf.org/html/rfc4226 (Event Tokens) and http://tools.ietf.org/html/draft-mraihi-totp-timebased-00 (Time Tokens) specifications.
+Tokens can be exported as a QR code or by manually copying the seed to the clipboard.
 
 Screen Shots
 ------------
-
-![alt tag](https://github.com/markmcavoy/androidtoken/blob/wiki/screenshot1.png)
-![alt tag](https://github.com/markmcavoy/androidtoken/blob/wiki/screenshot2.png)
+![Main View](https://github.com/markmcavoy/androidtoken/blob/wiki/mainlist.png)
+![Manually adding a new token](https://github.com/markmcavoy/androidtoken/blob/wiki/add_token.png)
+![Settings page](https://github.com/markmcavoy/androidtoken/blob/wiki/settings.png)

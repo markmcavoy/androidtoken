@@ -1,37 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="uk.co.bitethebullet.android.token"
-      android:versionCode="5"
-      android:versionName="2.10" 
-      android:installLocation="auto">
-    
+    package="uk.co.bitethebullet.android.token"
+    android:installLocation="auto"
+    android:versionCode="6"
+    android:versionName="3.00">
+
     <supports-screens
-          android:largeScreens="true"
-          android:normalScreens="true"
-          android:smallScreens="true"
-          android:anyDensity="true" />
-    
-    <application android:label="@string/app_name" android:icon="@drawable/androidtoken">
-        <activity android:name=".TokenList"
-                  android:label="@string/app_name">
+        android:anyDensity="true"
+        android:largeScreens="true"
+        android:normalScreens="true"
+        android:smallScreens="true" />
+
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <application
+        android:icon="@drawable/androidtoken"
+        android:label="@string/app_name"
+        android:theme="@style/Theme.AppCompat.Light">
+        <activity android:name=".QRCodeActivity"></activity>
+        <activity android:name=".SettingActivity" />
+        <activity
+            android:name=".TokenList"
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:scheme="otpauth" />
-            </intent-filter>                
+            </intent-filter>
         </activity>
+        <activity
+            android:name=".TokenAdd"
+            android:label="@string/app_name_add" />
+        <activity
+            android:name=".PinChange"
+            android:label="@string/app_name_change_pin" />
+        <activity
+            android:name=".PinRemove"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".About"
+            android:label="@string/app_name_about" />
+    </application>
 
-  		<activity android:name=".TokenAdd" android:label="@string/app_name"></activity>
-		<activity android:name=".PinChange" android:label="@string/app_name"></activity>
-		<activity android:label="@string/app_name" android:name=".PinRemove"></activity>
-
-		<activity android:name="com.google.ads.AdActivity"/>
-		<activity android:name="Circle"></activity>
-		     
-	</application>
-	
-</manifest> 
+</manifest>

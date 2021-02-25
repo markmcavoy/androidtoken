@@ -1,5 +1,5 @@
 /*
- * Copyright Mark McAvoy - www.bitethebullet.co.uk 2009
+ * Copyright Mark McAvoy - www.bitethebullet.co.uk 2009 - 2020
  * 
  * This file is part of Android Token.
  *
@@ -38,13 +38,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemSelectedListener;
 
+import androidx.appcompat.app.AppCompatActivity;
+
+import uk.co.bitethebullet.android.token.datalayer.TokenDbAdapter;
+import uk.co.bitethebullet.android.token.tokens.HotpToken;
 import uk.co.bitethebullet.android.token.util.*;
 
-public class TokenAdd extends Activity {
+public class TokenAdd extends AppCompatActivity {
 
 	private static final int DIALOG_STEP1_NO_NAME = 0;
 	private static final int DIALOG_STEP1_NO_SERIAL = 1;
@@ -65,12 +70,14 @@ public class TokenAdd extends Activity {
 	private static final String KEY_NAME = "tokenName";
 	private static final String KEY_SERIAL = "tokenSerial";
 	private static final String KEY_SEED_FORMAT = "tokenSeedFormat";
+	private static final String KEY_ORGANISATION = "tokenOrganisation";
 	
 	//current state of the activity
 	private int mCurrentActivityStep = ACTIVITY_STEP_ONE;
 	
 	//holds the data from step 1
 	private String mName;
+	private String mOrganisation;
 	private String mSerial;
 	private int mTokenType;
 	private int mOtpLength;
@@ -87,7 +94,7 @@ public class TokenAdd extends Activity {
 		
 		setContentView(R.layout.token_add);
 		
-		loadSpinnerArrayData(R.id.tokenTypeSpinner, R.array.tokenType);
+		loadSpinnerArrayData(R.id.tokenTypeSpinner, R.array.tokenType, 1);
 		loadSpinnerArrayData(R.id.tokenOtpSpinner, R.array.otpLength);
 		loadSpinnerArrayData(R.id.tokenTimeStepSpinner, R.array.timeStep);
 		loadSpinnerArrayData(R.id.tokenSeedFormat, R.array.tokenSeedFormatType, 1);
@@ -99,7 +106,8 @@ public class TokenAdd extends Activity {
 			int otpLength = savedInstanceState.getInt(KEY_OTP_LENGTH);
 			int timeStep = savedInstanceState.getInt(KEY_TIME_STEP);
 			String tokenName = savedInstanceState.getString(KEY_NAME);
-			String tokenSerial = savedInstanceState.getString(KEY_SERIAL);			
+			String tokenSerial = savedInstanceState.getString(KEY_SERIAL);
+			String tokenOrganisation = savedInstanceState.getString(KEY_ORGANISATION);
 			
 			if(mCurrentActivityStep == ACTIVITY_STEP_TWO){
 				//step 2
@@ -107,7 +115,8 @@ public class TokenAdd extends Activity {
 				mSerial = tokenSerial;
 				mTokenType = tokenType;
 				mOtpLength = otpLength;
-				mTimeStep = timeStep;				
+				mTimeStep = timeStep;
+				mOrganisation = tokenOrganisation;
 				
 				showStepTwo();
 				
@@ -166,6 +175,7 @@ public class TokenAdd extends Activity {
 		outState.putInt(KEY_ACTIVITY_STATE, mCurrentActivityStep);
 		outState.putString(KEY_NAME, mName);
 		outState.putString(KEY_SERIAL, mSerial);
+		outState.putString(KEY_ORGANISATION, mOrganisation);
 	}
 
 
@@ -326,6 +336,7 @@ public class TokenAdd extends Activity {
 			boolean isValid = true;
 			
 			String name = ((EditText)findViewById(R.id.tokenNameEdit)).getText().toString();
+			String organisation = ((EditText)findViewById(R.id.tokenOrganisationEdit)).getText().toString();
 			String serial = ((EditText)findViewById(R.id.tokenSerialEdit)).getText().toString();
 			
 			if(name.length() == 0){
@@ -336,6 +347,7 @@ public class TokenAdd extends Activity {
 			if(isValid){
 				//store step 1 values in members vars
 				mName = name;
+				mOrganisation = organisation;
 				mSerial = serial;
 				mTokenType = ((Spinner)findViewById(R.id.tokenTypeSpinner)).getSelectedItemPosition();;
 				mOtpLength = Integer.parseInt(((Spinner)findViewById(R.id.tokenOtpSpinner)).getSelectedItem().toString());
@@ -441,7 +453,9 @@ public class TokenAdd extends Activity {
 				//store token in db
 				TokenDbAdapter db = new TokenDbAdapter(v.getContext());
 				db.open();
-				db.createToken(mName, mSerial, seed, mTokenType, mOtpLength, mTimeStep);
+				db.createToken(mName, mSerial, seed,
+								mTokenType, mOtpLength,
+								mTimeStep, mOrganisation);
 				db.close();
 				
 				setResult(RESULT_OK);
@@ -526,8 +540,8 @@ public class TokenAdd extends Activity {
 
 	private void showStepTwo() {
 		//show the next step
-		LinearLayout step1 = (LinearLayout)findViewById(R.id.tokenAddStep1);
-		LinearLayout step2 = (LinearLayout)findViewById(R.id.tokenAddStep2);
+		RelativeLayout step1 = (RelativeLayout)findViewById(R.id.tokenAddStep1);
+		RelativeLayout step2 = (RelativeLayout)findViewById(R.id.tokenAddStep2);
 		
 		step1.setVisibility(View.GONE);
 		step2.setVisibility(View.VISIBLE);

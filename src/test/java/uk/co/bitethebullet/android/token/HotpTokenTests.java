@@ -1,5 +1,5 @@
 /*
- * Copyright Mark McAvoy - www.bitethebullet.co.uk 2009
+ * Copyright Mark McAvoy - www.bitethebullet.co.uk 2009 - 2020
  * 
  * This file is part of Android Token.
  *
@@ -22,6 +22,8 @@ package uk.co.bitethebullet.android.token;
 
 import org.junit.Test;
 import com.google.common.truth.Truth;
+
+import uk.co.bitethebullet.android.token.tokens.HotpToken;
 
 public class HotpTokenTests {
 

@@ -1,48 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:layout_width="fill_parent"
-  android:layout_height="wrap_content"
-  android:orientation="vertical"
-  android:padding="5sp">  
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/parentPinChange"
+	android:orientation="vertical"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:visibility="visible"
+	android:paddingBottom="20dp"
+	android:paddingLeft="15dp"
+	android:paddingRight="15dp">
+
 <TextView android:text="@string/pinChangeExistingPin" 
 		  android:id="@+id/pinChangeExistingPin" 
 		  android:layout_width="wrap_content" 
-		  android:layout_height="wrap_content"></TextView>
+		  android:layout_height="wrap_content"
+		  android:layout_marginTop="10dp"
+		  android:layout_alignParentTop="true"></TextView>
 
 <EditText
     android:id="@+id/pinChangeExistingPinEdit"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:inputType="number"
-    android:password="true" >
+    android:password="true"
+	android:layout_below="@id/pinChangeExistingPin">
 </EditText>
 <TextView android:text="@string/pinChangeNew1" 
 		  android:id="@+id/pingChangeNew1" 
 		  android:layout_width="wrap_content" 
-		  android:layout_height="wrap_content"></TextView>
+		  android:layout_height="wrap_content"
+	      android:layout_marginTop="20dp"
+	      android:layout_below="@id/pinChangeExistingPinEdit"></TextView>
 
 <EditText
     android:id="@+id/pinChangeNew1Edit"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:inputType="number"
-    android:password="true" >
+    android:password="true"
+	android:layout_below="@id/pingChangeNew1">
 </EditText>
 <TextView android:text="@string/pinChangeNew2" 
 		  android:id="@+id/pinChangeNew2" 
 		  android:layout_width="wrap_content" 
-		  android:layout_height="wrap_content"></TextView>
+		  android:layout_height="wrap_content"
+		  android:layout_marginTop="20dp"
+	      android:layout_below="@id/pinChangeNew1Edit"></TextView>
 
 <EditText
     android:id="@+id/pinChangeNew2Edit"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:inputType="number"
-    android:password="true" >
+    android:password="true"
+	android:layout_below="@id/pinChangeNew2">
 </EditText>
 <Button android:text="@string/pinChangeSubmit" 
 		android:id="@+id/pinChangeSubmit" 
 		android:layout_width="wrap_content" 
-		android:layout_height="wrap_content"></Button>
-</LinearLayout>
+		android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true"
+		android:layout_alignParentRight="true"
+		android:layout_marginRight="20dp"></Button>
+
+</RelativeLayout>

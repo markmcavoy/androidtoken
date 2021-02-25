@@ -1,59 +1,147 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="noTokens">No Tokens Defined</string>
-    <string name="app_name">Android Token</string>
-<string name="menu_add_token">Add Token</string>
-<string name="menu_pin_change">Change PIN</string>
-<string name="menu_pin_remove">Remove Pin</string>
-<string name="menu_delete_token">Delete Token</string>
-<string name="tokenType">Token Type</string>
-<string name="tokenName">Name</string>
-<string name="tokenSerial">Serial No</string>
-<string name="tokenOtp">OTP Length</string>
-<string name="tokenTimeStep">Time Step</string>
-<string name="btnAddStep2">Next &gt;</string>
-<string name="tokenTypeSpinnerPrompt">Select Token Type</string>
-<string name="tokenOtpSpinnerPrompt">Select OTP Length</string>
-<string name="tokenTimeStepSpinnerPrompt">Select Time Step</string>
-<string name="tokenSeedMethod">Token Seed Method</string>
-<string name="rbSeedManual">Direct Seed Entry</string>
-<string name="rbSeedRandom">Generate Random Seed</string>
-<string name="rbSeedPassword">Seed from Password</string>
-<string name="tokenSeed">Token Seed Value</string>
-<string name="tokenAddComplete">Complete</string>
-<string name="dialogPositive">OK</string>
-<string name="dialogNegative">Cancel</string>
-<string name="tokenAddDialogNoName">Token Name is Required</string>
-<string name="tokenAddDialogNoSerial">Token Serial is Required</string>
-<string name="tokenAddDialogNoSeed">Token Seed is Required</string>
-<string name="tokenAddDialogInvalidSeedTooShort">Token Seed is weak, the recommended minimum is 128 bits. The seed enter contains %s bits. Create the token anyway?</string>
-<string name="tokenAddDialogInvalidSeedTooShort2">Token Seed is too short</string>
-<string name="tokenAddDialogInvalidSeedNotHex">Token Seed is Invalid, only enter a-f, A-F or 0-9 characters.</string>
-<string name="tokenrowtextserialcaption">S/N:</string>
-<string name="pinChangeExistingPin">Enter Existing PIN</string>
-<string name="pinChangeNew1">New PIN</string>
-<string name="pinChangeNew2">Confirm PIN</string>
-<string name="pinChangeSubmit">Save</string>
-<string name="pinAlertInvalidPin">Existing PIN is invalid</string>
-<string name="pinAlertNewPinsDifferent">The new PINs are not the same</string>
-<string name="pinAlertNewPinBlank">New PIN is required</string>
-<string name="pinRemoveExistingPin">Enter Existing PIN</string>
-<string name="pinRemoveSubmit">Remove</string>
-<string name="mainLogin">Login</string>
-<string name="otpDialogTitle">One Time Password</string>
-<string name="tokenSeedFormat">Input Format</string>
-<string name="menu_scan">Scan QR</string>
-<string name="otpAuthUrlInvalid">otpauth url is not valid</string>
-<string name="otpAuthTokenTypeInvalid">Invalid token type</string>
-<string name="otpAuthMissingCounterParameter">The counter parameter is required when creating an HOTP token</string>
-<string name="cancel">Cancel</string>
-<string name="install">Install</string>
-<string name="install_zxing_title">Install Barcode Scanner?</string>
-<string name="install_zxing_caption">To read barcode you need need install the ZXING barcode scanner app.</string>
-<string name="confirmDelete">Are you sure you want to delete this token?</string>
-<string name="toastDeleted">Token Deleted</string>
-<string name="toastAdded">Token Added</string>
-<string name="toastInvalidQr">Invalid QR code</string>
-<string name="tokenAddDialogInvalidSeedConvertion">Unable to convert the supplied value to a hex seed</string>
-<string name="tokenAddDialogUnableToSwitchFormat">Unable to switch input format, value entered is invalid</string>
+    <string name="app_name">Auth Token</string>
+    <string name="app_name_add">Auth Token - Add Token</string>
+    <string name="app_name_change_pin">Auth Token - Change Pin</string>
+    <string name="app_name_about">Auth Token - About</string>
+    <string name="menu_add_token">Add Token</string>
+    <string name="menu_pin_change">Change PIN</string>
+    <string name="menu_pin_remove">Remove Pin</string>
+    <string name="menu_delete_token">Delete Token</string>
+    <string name="tokenType">Token Type</string>
+    <string name="tokenName">Name</string>
+    <string name="tokenOrganisation">Organisation</string>
+    <string name="tokenSerial">Serial No</string>
+    <string name="tokenOtp">OTP Length</string>
+    <string name="tokenTimeStep">Time Step</string>
+    <string name="btnAddStep2">Next &gt;</string>
+    <string name="tokenTypeSpinnerPrompt">Select Token Type</string>
+    <string name="tokenOtpSpinnerPrompt">Select OTP Length</string>
+    <string name="tokenTimeStepSpinnerPrompt">Select Time Step</string>
+    <string name="tokenSeedMethod">Token Seed Method</string>
+    <string name="rbSeedManual">Direct Seed Entry</string>
+    <string name="rbSeedRandom">Generate Random Seed</string>
+    <string name="rbSeedPassword">Seed from Password</string>
+    <string name="tokenSeed">Token Seed Value</string>
+    <string name="tokenAddComplete">Complete</string>
+    <string name="dialogPositive">OK</string>
+    <string name="dialogNegative">Cancel</string>
+    <string name="tokenAddDialogNoName">Token Name is Required</string>
+    <string name="tokenAddDialogNoSerial">Token Serial is Required</string>
+    <string name="tokenAddDialogNoSeed">Token Seed is Required</string>
+    <string name="tokenAddDialogInvalidSeedTooShort">Token Seed is weak, the recommended minimum is 128 bits. The seed enter contains %s bits. Create the token anyway?</string>
+    <string name="tokenAddDialogInvalidSeedTooShort2">Token Seed is too short</string>
+    <string name="tokenAddDialogInvalidSeedNotHex">Token Seed is Invalid, only enter a-f, A-F or 0-9 characters.</string>
+    <string name="tokenrowtextserialcaption">S/N:</string>
+    <string name="pinChangeExistingPin">Enter PIN</string>
+    <string name="pinChangeNew1">New PIN</string>
+    <string name="pinChangeNew2">Confirm PIN</string>
+    <string name="pinChangeSubmit">Save</string>
+    <string name="pinAlertInvalidPin">Existing PIN is invalid</string>
+    <string name="pinAlertNewPinsDifferent">The new PINs are not the same</string>
+    <string name="pinAlertNewPinBlank">New PIN is required</string>
+    <string name="pinRemoveExistingPin">Enter Existing PIN</string>
+    <string name="pinRemoveSubmit">Remove</string>
+    <string name="mainLogin">Login</string>
+    <string name="otpDialogTitle">One Time Password</string>
+    <string name="tokenSeedFormat">Input Format</string>
+    <string name="menu_scan">Scan QR</string>
+    <string name="menu_settings">Settings</string>
+    <string name="menu_about">About</string>
+    <string name="otpAuthUrlInvalid">otpauth url is not valid</string>
+    <string name="otpAuthTokenTypeInvalid">Invalid token type</string>
+    <string name="otpAuthMissingCounterParameter">The counter parameter is required when creating an HOTP token</string>
+    <string name="cancel">Cancel</string>
+    <string name="install">Install</string>
+    <string name="install_zxing_title">Install Barcode Scanner?</string>
+    <string name="install_zxing_caption">To read barcode you need need install the ZXING barcode scanner app.</string>
+    <string name="confirmDelete">Are you sure you want to delete this token?</string>
+    <string name="toastDeleted">Token Deleted</string>
+    <string name="toastAdded">Token Added</string>
+    <string name="toastInvalidQr">Invalid QR code</string>
+    <string name="tokenAddDialogInvalidSeedConvertion">Unable to convert the supplied value to a hex seed</string>
+    <string name="tokenAddDialogUnableToSwitchFormat">Unable to switch input format, value entered is invalid</string>
+    <string name="git_hub_url"><a href="https://github.com/markmcavoy/androidtoken">https://github.com/markmcavoy/androidtoken</a></string>
+    <string name="about_info">Auth Token is a free and open source TOTP and HOTP application from
+        Zalabria Limited.\n\nIf you would like us to help you with your Android/iOS projects please get in
+        touch. <a href="http://www.zalabria.com/">Zalabria</a></string>
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+    <string name="preferences_security_title">Security</string>
+    <string name="preferences_display_title">Display Preferences</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+
+    <string name="fasHourGlassStart">&#xf251;</string>
+
+    <string name="farClock">&#xf017;</string>
+    <string name="farPlusSquare">&#xf0fe;</string>
+
+    <string name="fabAmazon">&#xf270;</string>
+    <string name="fabApple">&#xf179;</string>
+    <string name="fabAtlassian">&#xf77b;</string>
+    <string name="fabAws">&#xf375;</string>
+    <string name="fabBitbucket">&#xf171;</string>
+    <string name="fabEbay">&#xf4f4;</string>
+    <string name="fabEtsy">&#xf2d7;</string>
+    <string name="fabEvernote">&#xf839;</string>
+    <string name="fabFacebook">&#xf09a;</string>
+    <string name="fabGithub">&#xf09b;</string>
+    <string name="fabGoogle">&#xf1a0;</string>
+    <string name="fabInstagram">&#xf16d;</string>
+    <string name="fabJira">&#xf7b1;</string>
+    <string name="fabMicrosoft">&#xf3ca;</string>
+    <string name="fabPaypal">&#xf1ed;</string>
+    <string name="fabSaleforce">&#xf83b;</string>
+    <string name="fabSnapchat">&#xf2ab;</string>
+    <string name="fabSquarespace">&#xf5be;</string>
+    <string name="fabStripe">&#xf429;</string>
+    <string name="fabTrello">&#xf181;</string>
+    <string name="fabWordpress">&#xf19a;</string>
+
+
+    <string name="token_change_icon">Change Icon</string>
+    <string name="token_delete">Delete Token</string>
+    <string name="token_code_secret">Copy Seed to Clipboard</string>
+    <string name="token_generate_qr_code">Generate QR Code</string>
+    <string name="copy_token_seed_to_clipboard_ok">Token seed copied</string>
+    <string name="qr_fab">Scan QR</string>
+
+    <string name="delete">Delete</string>
+    <string name="delete_token_dialog_title">Delete Token</string>
+    <string name="delete_token_dialog_message">Are you sure you want to delete the token, [name]?</string>
+    <string name="token_is_deleted">Token as been deleted</string>
+    <string name="security_lock">Security Protection</string>
+    <string name="preferences_display_grouping">Group token into two digit blocks</string>
+    <string name="invalid_pin">Invalid PIN</string>
+    <string name="token_seed_copied">Token seed copied</string>
+
+    <string name="hotp_dialog_title">HOTP Token</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="ok">Ok</string>
+    <string name="set_pin">Set PIN</string>
+
+    <string name="title_activity_about">About</string>
+    <string name="about_close_button">Close</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+
+
 </resources>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="20dp"
+    android:paddingLeft="15dp"
+    android:paddingRight="15dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/about_title"
+        android:text="@string/app_name"
+        android:layout_marginTop="10dp"
+        android:layout_alignParentTop="true"
+        android:textSize="20dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/about_info"
+        android:text="@string/about_info"
+        android:layout_marginTop="30dp"
+        android:layout_below="@id/about_title"
+        android:textSize="18dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/about_url"
+        android:text="@string/git_hub_url"
+        android:layout_marginTop="30dp"
+        android:textSize="18dp"
+        android:layout_below="@id/about_info"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/about_close_button"
+        android:text="@string/about_close_button"
+        android:textSize="18dp"
+        android:layout_marginTop="30dp"
+        android:layout_below="@id/about_url"
+        android:onClick="closeHandler"/>
+
+</RelativeLayout>

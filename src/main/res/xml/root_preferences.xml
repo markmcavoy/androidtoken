@@ -1,0 +1,23 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory app:title="@string/preferences_security_title">
+
+        <ListPreference
+            android:title="@string/security_lock"
+            android:key="securityLock"
+            android:defaultValue="0"
+            android:entries="@array/listSecurityPrefKeys"
+            android:entryValues="@array/listSecurityPrefValues" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/preferences_display_title">
+
+    <SwitchPreferenceCompat
+        app:key="groupIntoTwoDigits"
+        app:title="@string/preferences_display_grouping" />
+
+    </PreferenceCategory>
+    
+</PreferenceScreen>

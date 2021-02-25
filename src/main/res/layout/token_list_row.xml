@@ -4,27 +4,28 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="5sp" >
+    android:padding="5dp" >
 
-    <ImageView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/ivTokenIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
+    <TextView
+        android:id="@+id/faIcon"
+        android:layout_width="44sp"
+        android:layout_height="fill_parent"
         android:layout_alignParentTop="true"
-        android:layout_marginRight="5sp"
-        android:layout_marginTop="10sp" />
+        android:layout_centerVertical="true"
+        android:textSize="36sp"
+        android:textAlignment="center"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"/>
 
     <TextView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/tokenrowtextname"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/ivTokenIcon"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_toRightOf="@+id/faIcon"
+        android:layout_alignParentTop="false"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="4dp"
         android:textSize="15sp" >
     </TextView>
 
@@ -47,7 +48,7 @@
         android:layout_alignBaseline="@+id/tokenrowtextserialcaption"
         android:layout_alignTop="@+id/tokenrowtextserialcaption"
         android:layout_toRightOf="@+id/tokenrowtextserialcaption"
-        android:paddingLeft="5sp"
+        android:paddingLeft="6dp"
         android:textSize="12sp" >
     </TextView>
 
@@ -59,20 +60,24 @@
         android:textSize="25sp"
         android:textStyle="bold"
         android:visibility="gone" 
-        android:layout_marginLeft="16dp"
+        android:layout_marginLeft="20dp"
         android:layout_below="@+id/tokenrowtextserialcaption"
-        android:layout_toRightOf="@+id/ivTokenIcon">
+        android:layout_toRightOf="@+id/faIcon">
     </TextView>
-
+
+
     <ProgressBar
         android:id="@+id/totpTimerProgressbar"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignRight="@+id/tokenrowtextname"
-        android:layout_alignTop="@+id/ivTokenIcon"
         android:hapticFeedbackEnabled="false"
-        android:minWidth="75sp"
-        android:visibility="gone" />
+        android:layout_gravity="center"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:minWidth="75dp"
+        android:visibility="gone"
+        android:layout_marginRight="10dp"/>
 
 </RelativeLayout>

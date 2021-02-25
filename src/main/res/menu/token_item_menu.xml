@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/token_change_icon"
+        android:title="@string/token_change_icon" android:visible="false" />
+    <item android:id="@+id/token_delete"
+        android:title="@string/token_delete" />
+    <item android:id="@+id/token_copy_secret"
+        android:title="@string/token_code_secret" />
+    <item android:id="@+id/token_generate_qr_code"
+         android:title="@string/token_generate_qr_code" />
+</menu>

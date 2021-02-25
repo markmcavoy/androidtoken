@@ -20,7 +20,7 @@
 package uk.co.bitethebullet.android.token.util;
 
 import java.io.IOException;
-import uk.co.bitethebullet.android.token.HotpToken;
+import uk.co.bitethebullet.android.token.tokens.HotpToken;
 
 public class SeedConvertor {
 	

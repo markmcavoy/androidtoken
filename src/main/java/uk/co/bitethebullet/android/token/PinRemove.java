@@ -1,5 +1,5 @@
 /*
- * Copyright Mark McAvoy - www.bitethebullet.co.uk 2009
+ * Copyright Mark McAvoy - www.bitethebullet.co.uk 2009 - 2020
  * 
  * This file is part of Android Token.
  *
@@ -50,7 +50,8 @@ public class PinRemove extends Activity {
 			String pin = ((EditText)findViewById(R.id.pinRemoveExistingPinEdit)).getText().toString();
 			
 			if(PinManager.validatePin(v.getContext(), pin)){
-				PinManager.removePin(v.getContext());
+				//todo: MM fix me
+				//PinManager.removePin(v.getContext());
 				finish();
 			}else{
 				// the pin isn't the same as the one stored, do nothing
