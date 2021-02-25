@@ -14,7 +14,5 @@ Tokens can be exported as a QR code or by manually copying the seed to the clipb
 Screen Shots
 ------------
 ![Main View](https://github.com/markmcavoy/androidtoken/blob/wiki/mainlist.png)
-
 ![Manually adding a new token](https://github.com/markmcavoy/androidtoken/blob/wiki/add_token.png)
-
 ![Settings page](https://github.com/markmcavoy/androidtoken/blob/wiki/settings.png)
