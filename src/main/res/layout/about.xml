@@ -33,4 +33,14 @@
         android:textSize="18dp"
         android:layout_below="@id/about_info"/>
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/about_close_button"
+        android:text="@string/about_close_button"
+        android:textSize="18dp"
+        android:layout_marginTop="30dp"
+        android:layout_below="@id/about_url"
+        android:onClick="closeHandler"/>
+
 </RelativeLayout>

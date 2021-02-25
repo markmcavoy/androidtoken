@@ -33,7 +33,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 30
         versionCode 6
-        versionName "2.11"
+        versionName "3.0"
     }
 
     packagingOptions {

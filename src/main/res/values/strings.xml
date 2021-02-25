@@ -63,8 +63,8 @@
     <string name="tokenAddDialogInvalidSeedConvertion">Unable to convert the supplied value to a hex seed</string>
     <string name="tokenAddDialogUnableToSwitchFormat">Unable to switch input format, value entered is invalid</string>
     <string name="git_hub_url"><a href="https://github.com/markmcavoy/androidtoken">https://github.com/markmcavoy/androidtoken</a></string>
-    <string name="about_info">Auth Token is the free and open source TOTP and HOTP application from
-        Zalabria Limited.\n\nIf you would like us to help you with your Android project please get in
+    <string name="about_info">Auth Token is a free and open source TOTP and HOTP application from
+        Zalabria Limited.\n\nIf you would like us to help you with your Android/iOS projects please get in
         touch. <a href="http://www.zalabria.com/">Zalabria</a></string>
     <!-- Preference Titles -->
     <string name="messages_header">Messages</string>
@@ -131,7 +131,9 @@
     <string name="dismiss">Dismiss</string>
     <string name="ok">Ok</string>
     <string name="set_pin">Set PIN</string>
+
     <string name="title_activity_about">About</string>
+    <string name="about_close_button">Close</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>

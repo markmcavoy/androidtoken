@@ -2,6 +2,7 @@ package uk.co.bitethebullet.android.token;
 
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -18,6 +19,9 @@ public class About  extends AppCompatActivity {
         setupHyperlink();
     }
 
+    public void closeHandler(View v){
+        finish();
+    }
 
     private void setupHyperlink() {
         TextView linkTextView = findViewById(R.id.about_url);
